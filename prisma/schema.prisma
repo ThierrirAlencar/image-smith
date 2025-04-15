@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//Tipo de usuário
+enum role {
+  Admin
+  User
+}
+
+
+model User{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String 
+  role role @default(User) //Tipo de usuário
+  created_at DateTime @default(now())
+  updated_at DateTime?
+
+  image_list Image[] //Lista de imagens de um usuário
+}
+
+model Image{
+
+  Id String @id @default(uuid())
+  user_id String //Referencia ao User
+
+  //Caminhos do arquivo
+  original_filename String
+  stored_filepath String
+  process_filepath String? 
+
+  size Float @default(0) //tamanho do arquivo em mb
+
+  created_at DateTime @default(now())
+  updated_at DateTime?
+
+  user_favorite Boolean // verifica se a imagem é uma favorita do usuário
+  uRef User @relation(fields: [user_id], references: [id])
+}
+
+model image_processing{
+  id String @id @default(uuid())
+  image_id String
+  operation String @default("none")
+  output_filename String
+  completed Boolean? //null = nao terminado, false = erro, true = sucesso
+  created_at DateTime @default(now())
+}
