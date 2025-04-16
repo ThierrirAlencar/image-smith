@@ -1,13 +1,16 @@
-import { Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import { Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UniqueKeyViolationError } from 'src/shared/errors/UniqueKeyViolationError';
 import { stat } from 'fs';
 import { z } from 'zod';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from '../auth/auth.service';
+import { AuthRequest } from 'src/interfaces/authRequest';
 
 @Controller('user')
 export class UserController {
-    constructor(private userService:UserService){}
+    constructor(private userService:UserService,private authService:AuthService){}
 
     @Post("")
     async create(@Req() req:Request){
@@ -59,7 +62,8 @@ export class UserController {
   
       try {
         const response = await this.userService.login(Email, Password);
-  
+        
+        const token = await this.authService.generateToken({id:response.userId});
         return {
           statusCode: 200,
           description: 'Login realizado com sucesso',
@@ -84,9 +88,12 @@ export class UserController {
         );
       }
     }
-  
-    @Get(':id')
-    async profile(@Param('id') id: string) {
+    @UseGuards(AuthGuard("jwt"))
+    @Get('')
+    async profile(@Req() req:AuthRequest) {
+      const {id} = z.object({
+        id:z.string().uuid()
+      }).parse(req.user)
       try {
         const profile = await this.userService.userProfile(id);
   
@@ -114,9 +121,13 @@ export class UserController {
         );
       }
     }
-  
-    @Patch(':id')
-    async update(@Param('id') id: string, @Req() req: Request) {
+
+    @UseGuards(AuthGuard("jwt"))
+    @Put('')
+    async update(@Req() req:AuthRequest) {
+      const {id} = z.object({
+        id:z.string().uuid()
+      }).parse(req.user)
       const bodySchema = z.object({
         email: z.string().email().optional(),
         name: z.string().optional(),
@@ -153,9 +164,14 @@ export class UserController {
         );
       }
     }
-  
-    @Delete(':id')
-    async delete(@Param('id') id: string) {
+
+    @UseGuards(AuthGuard("jwt"))
+    @Delete('')
+    async delete(@Req() req:AuthRequest) {
+      const {id} = z.object({
+        id:z.string().uuid()
+      }).parse(req.user)
+
       try {
         await this.userService.delete(id);
   
