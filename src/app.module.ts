@@ -4,16 +4,17 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './modules/auth/jwt.strategy';
+import { ImageModule } from './modules/image/image.module';
 
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'sua-secret-key',
-      signOptions: { expiresIn: '1d' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '30d' },
     }),
-    UserModule, AuthModule
+    UserModule, AuthModule, ImageModule
   ],
   providers: [JwtStrategy],
 })
