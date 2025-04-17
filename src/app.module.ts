@@ -5,6 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './modules/auth/jwt.strategy';
 import { ImageModule } from './modules/image/image.module';
+import { ProcessModule } from './modules/process/process.module';
 
 
 @Module({
@@ -14,7 +15,7 @@ import { ImageModule } from './modules/image/image.module';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '30d' },
     }),
-    UserModule, AuthModule, ImageModule
+    UserModule, AuthModule, ImageModule, ProcessModule
   ],
   providers: [JwtStrategy],
 })

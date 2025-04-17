@@ -10,10 +10,16 @@ export const swaggerOptions:OpenAPIObject = {
             name:"MIT"
         },
     },
+    tags:[
+      {name:"Images",description:"Rotas para gerenciar o upload de imagens para um usuário"},
+      {name:"Processing",description:"Rotas utilizadas para processar imagens, aplicando efeitos e transformações para ela"},
+      {name:"Auth",description:"Rotas utilizadas para validação, registro e gerenciamento dos usuários"},
+    ],
     openapi:"3.0.0",
     paths:{
       '/auth': {
         get: {
+          tags:["Auth"],
           summary: 'Obter perfil do usuário',
           security: [{ bearerAuth: [] }],
           responses: {
@@ -37,6 +43,7 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
         put: {
+          tags:["Auth"],
           summary: 'Atualizar dados do usuário',
           security: [{ bearerAuth: [] }],
           requestBody: {
@@ -76,6 +83,7 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
         delete: {
+          tags:["Auth"],
           summary: 'Deletar usuário',
           security: [{ bearerAuth: [] }],
           responses: {
@@ -98,6 +106,7 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       post: {
+        tags:["Auth"],
         summary: 'Criar novo usuário',
         requestBody: {
           required: true,
@@ -142,6 +151,7 @@ export const swaggerOptions:OpenAPIObject = {
       },
       '/auth/login': {
         post: {
+          tags:["Auth"],
           summary: 'Login de usuário',
           requestBody: {
             required: true,
@@ -319,7 +329,178 @@ export const swaggerOptions:OpenAPIObject = {
             },
           },
         },
-      }
+      },
+      '/processes': {
+        post: {
+          tags:["Processing"],
+          summary: 'Criar processamento de imagem',
+          description: 'Cria um novo processamento de uma imagem com base em seu ID.',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/CreateImageProcessDto',
+                },
+              },
+            },
+          },
+          responses: {
+            '201': {
+              description: 'Processamento criado com sucesso',
+            },
+            '404': {
+              description: 'Imagem não encontrada',
+            },
+            '500': {
+              description: 'Erro desconhecido',
+            },
+          },
+        },
+      },
+      '/processes/{id}': {
+        summary:"Utilize para CRUD de um processo específico",
+        put: {
+          tags:["Processing"],
+          summary: 'Atualizar um processamento de imagem',
+          description: 'Atualiza dados como operação e status de conclusão de um processamento.',
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: {
+                type: 'string',
+                format: 'uuid',
+              },
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/UpdateImageProcessDto',
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Processamento atualizado com sucesso',
+            },
+            '500': {
+              description: 'Erro ao atualizar processamento',
+            },
+          },
+        },
+        delete: {
+          tags:["Processing"],
+          summary: 'Deletar um processamento de imagem',
+          description: 'Remove um processamento com base no ID.',
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: {
+                type: 'string',
+                format: 'uuid',
+              },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Processamento deletado com sucesso',
+            },
+            '404': {
+              description: 'Processamento não encontrado',
+            },
+            '500': {
+              description: 'Erro ao deletar processamento',
+            },
+          },
+        },
+        get: {
+          tags:["Processing"],
+          summary: 'Buscar um processamento por ID',
+          description: 'Retorna detalhes de um processamento específico.',
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: {
+                type: 'string',
+                format: 'uuid',
+              },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Processamento retornado com sucesso',
+            },
+            '404': {
+              description: 'Processamento não encontrado',
+            },
+            '500': {
+              description: 'Erro ao buscar processamento',
+            },
+          },
+        },
+      },
+      '/processes/image/{imageId}': {
+        get: {
+          tags:["Processing"],
+          summary: 'Listar processamentos de uma imagem',
+          description: 'Retorna todos os processamentos de uma imagem específica pelo ID.',
+          parameters: [
+            {
+              name: 'imageId',
+              in: 'path',
+              required: true,
+              schema: {
+                type: 'string',
+                format: 'uuid',
+              },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Lista de processamentos retornada com sucesso',
+            },
+            '404': {
+              description: 'Imagem não encontrada',
+            },
+            '500': {
+              description: 'Erro ao buscar processamentos',
+            },
+          },
+        },
+      },
+      '/processes/recent': {
+        get: {
+          tags:["Processing"],
+          summary: 'Buscar o processamento mais recente do usuário',
+          description: 'Retorna o último processamento realizado entre todas as imagens do usuário logado.',
+          security: [
+            {
+              bearerAuth: [],
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Último processamento retornado com sucesso',
+            },
+            '404': {
+              description: 'Usuário não encontrado',
+            },
+            '500': {
+              description: 'Erro desconhecido',
+            },
+          },
+        },
+      },
     },
     components: {
       securitySchemes: {
@@ -340,6 +521,33 @@ export const swaggerOptions:OpenAPIObject = {
             size: { type: 'number', example: 204800 },
             created_at: { type: 'string', format: 'date-time', example: '2025-04-16T12:00:00Z' },
             updated_at: { type: 'string', format: 'date-time', example: '2025-04-16T12:00:00Z' },
+          },
+        },
+        CreateImageProcessDto: {
+          type: 'object',
+          properties: {
+            image_id: {
+              type: 'string',
+              format: 'uuid',
+            },
+            output_filename: {
+              type: 'string',
+              nullable: true,
+            },
+          },
+          required: ['image_id'],
+        },
+        UpdateImageProcessDto: {
+          type: 'object',
+          properties: {
+            completed: {
+              type: 'boolean',
+              description: 'Se foi concluído ou não',
+            },
+            operation: {
+              type: 'string',
+              description: 'Descreve a operação realizada',
+            },
           },
         },
         },
