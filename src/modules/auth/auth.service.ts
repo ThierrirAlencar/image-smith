@@ -9,9 +9,11 @@ export class AuthService {
   }
 
   async generateToken({id}:user): Promise<string> {
-    const payload = { username: name, sub:id };
-    console.log(payload)
-    return this.jwtservice.sign(payload);
+    const payload = { sub:id };
+    // console.log(payload)
+    return this.jwtservice.sign(payload,{
+      secret:process.env.JWT_SECRET
+    });
   }
 
   async validateUser(payload: any): Promise<user> {

@@ -1,8 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtService } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
+    imports:[
+        PassportModule,
+        JwtModule.register({
+              secret: "IMAGEFORGE",
+              signOptions: { expiresIn: '30d' },
+        }),
+    ],
     providers:[AuthService,JwtService],
     exports:[AuthService]
 })

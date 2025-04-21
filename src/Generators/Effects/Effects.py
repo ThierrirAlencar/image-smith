@@ -13,13 +13,12 @@ effectsNameList = [
     "Heat","Sepia","Cartoon","Pencil_Sketh"
 ]
 input_path = parameters[0] # URl de entrada
-output_path = "./uploads/finished" # URL de saída
 effect = int(parameters[1])  # Efeito a ser aplicado
 Amount = int(parameters[2])  # Intensidade a ser aplicada
 AmountG = int(parameters[3]) # Em G se preciso
 AmountB = int(parameters[3]) # Em B se preciso
 file_name = effectsNameList[effect]+"-"+str(uuid.uuid4())
-
+output_path = "./uploads/finished/effect/"+effectsNameList[effect] # URL de saída
 
 
 if not os.path.exists(output_path):

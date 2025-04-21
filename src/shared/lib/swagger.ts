@@ -17,7 +17,7 @@ export const swaggerOptions:OpenAPIObject = {
     ],
     openapi:"3.0.0",
     paths:{
-      '/auth': {
+      '/user': {
         get: {
           tags:["Auth"],
           summary: 'Obter perfil do usuário',
@@ -149,7 +149,7 @@ export const swaggerOptions:OpenAPIObject = {
         },
       },
       },
-      '/auth/login': {
+      '/user/login': {
         post: {
           tags:["Auth"],
           summary: 'Login de usuário',
