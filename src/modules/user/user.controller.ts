@@ -7,13 +7,16 @@ import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError'
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
 import { AuthRequest } from 'src/interfaces/authRequest';
+import { Request, Response } from 'express';
+import { log } from 'console';
+import { InvalidPasswordError } from 'src/shared/errors/InvalidPasswordErorr';
 
 @Controller('user')
 export class UserController {
     constructor(private userService:UserService,private authService:AuthService){}
 
     @Post("")
-    async create(@Req() req:Request){
+    async create(@Req() req:Request,@Res() res:Response){
         const {Email,Password,userName} = z.object({
             Email:z.string({message:"Por favor informe um Email"}).email("Por favor informe um Email válido"),
             Password:z.string({message:"Por favor iforme uma senha"}).min(6,"deve ter no mínimo 6 caracteres"),
@@ -21,13 +24,14 @@ export class UserController {
         }).parse(req.body)
         
         try{
+            
             const response  = await this.userService.create({email:Email,name:userName,password:Password,role:'User'})
             
-            return{
+            res.status(201).send({
                 statusCode:201,
                 description:"Usuário criado com sucesso",
                 User:response.name
-            }
+            })
         }catch(err){
             if(err instanceof UniqueKeyViolationError){
                 throw new HttpException(
@@ -50,7 +54,7 @@ export class UserController {
     }
 
     @Post('login')
-    async login(@Req() req: Request) {
+    async login(@Req() req: Request, @Res() res:Response) {
       const { Email, Password } = z
         .object({
           Email: z
@@ -61,14 +65,17 @@ export class UserController {
         .parse(req.body);
   
       try {
+        
         const response = await this.userService.login(Email, Password);
         
         const token = await this.authService.generateToken({id:response.userId});
-        return {
+
+        res.status(200).send({
           statusCode: 200,
           description: 'Login realizado com sucesso',
-          userId: response.userId,
-        };
+          userId: token,
+        });
+
       } catch (err) {
         if (err instanceof EntityNotFoundError) {
           throw new HttpException(
@@ -77,6 +84,14 @@ export class UserController {
               error: err.message,
             },
             HttpStatus.NOT_FOUND,
+          );
+        }else if (err instanceof InvalidPasswordError) {
+          throw new HttpException(
+            {
+              description: 'Senha Errada',
+              error: err.message,
+            },
+            HttpStatus.NOT_ACCEPTABLE,
           );
         }
         throw new HttpException(
