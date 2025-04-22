@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { ImageService } from './image.service';
 import { ImageController } from './image.controller';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
+import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  providers: [ImageService,PrismaService],
+  providers: [ImageService,PrismaService,AuthService,JwtService],
   controllers: [ImageController]
 })
+
 export class ImageModule {}

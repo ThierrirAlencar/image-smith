@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, PrismaClient, role, User } from '@prisma/client';
-import { hash } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
+import { InvalidPasswordError } from 'src/shared/errors/InvalidPasswordErorr';
 import { UniqueKeyViolationError } from 'src/shared/errors/UniqueKeyViolationError';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
 
@@ -29,7 +30,7 @@ export class UserService {
         if(doesTheUserAlreadyExists){
             throw new UniqueKeyViolationError("User");
         }
-        const hashPassword = await hash(password,90);
+        const hashPassword = await hash(password,9);
         const createdUser = await this.prisma.user.create({
             data:{
                 email,name,password:hashPassword,role
@@ -110,7 +111,13 @@ export class UserService {
         if(!doesTheUserExists){
             throw new EntityNotFoundError("user",email)
         }
+        
+        const doesThePasswordMatch = await compare(password,doesTheUserExists.password)
 
+        if(!doesThePasswordMatch){
+            throw new InvalidPasswordError(email)
+        }
+        console.log("Chegou aqui")
         return{
             userId:doesTheUserExists.id
         }
