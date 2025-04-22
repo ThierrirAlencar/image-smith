@@ -9,7 +9,7 @@ import { ProcessModule } from './modules/process/process.module';
 
 @Module({
   imports: [
-    UserModule, AuthModule, ImageModule, ProcessModule
+    UserModule, AuthModule, ImageModule, ProcessModule 
   ],
   providers: [JwtStrategy],
 })

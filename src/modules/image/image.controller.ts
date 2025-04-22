@@ -9,6 +9,7 @@ import {
     HttpStatus,
     UseInterceptors,
     UploadedFile,
+    Res,
   } from '@nestjs/common';
   import { ImageService } from './image.service';
   import { AuthGuard } from '@nestjs/passport';
@@ -16,14 +17,18 @@ import {
 import { AuthRequest } from 'src/interfaces/authRequest';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
+import { AuthService } from '../auth/auth.service';
+import { log } from 'console';
+import { join } from 'path';
   
 @Controller('images')
 export class ImageController {
-    constructor(private imageService: ImageService) {}
+    constructor(private imageService: ImageService, private authService:AuthService) {}
   
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor("file",{
-        dest:"/uploads"
+        dest:join(__dirname, '..', '..',"..", 'uploads', 'uploaded')
     }))
     @Post('')
     async uploadImage(@Req() req: AuthRequest,@UploadedFile() file:Express.Multer.File) {
@@ -59,19 +64,20 @@ export class ImageController {
   
     @UseGuards(AuthGuard('jwt'))
     @Get('')
-    async listByUser(@Req() req: AuthRequest) {
-      const { id: userId } = z
-        .object({ id: z.string().uuid() })
-        .parse(req.user);
-  
+    async listByUser(@Req() req: AuthRequest, @Res() res:Response) {
+      const userId = req.user.id;
+
+      log(userId)
+      
       try {
+        
         const images = await this.imageService.findManyByUserId(userId);
   
-        return {
+        res.status(200).send({
           statusCode: 200,
           description: 'Lista de imagens retornada com sucesso',
           images,
-        };
+        });
       } catch (err) {
         if (err instanceof EntityNotFoundError) {
           throw new HttpException(

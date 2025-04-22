@@ -19,6 +19,7 @@ async function bootstrap() {
     credentials: true,
   });
 
+  
   app.use(express.json({limit:"10mb"}));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -33,7 +34,7 @@ async function bootstrap() {
   SwaggerModule.setup("docs",app,swaggerOptions)
 
   await app.listen(port,host,()=>{
-    console.log(`Running on: http://${host}:${port}`)
+    console.log(`Running on: http://${host}:${port}/docs`)
     console.log(`Através de IPV4 http://${process.env.IPV4_HOST}:${port}/docs`)
   });
 }
