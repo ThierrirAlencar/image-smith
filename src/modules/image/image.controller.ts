@@ -21,6 +21,7 @@ import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { log } from 'console';
 import { join } from 'path';
+import { diskStorage } from 'multer';
   
 @Controller('images')
 export class ImageController {
@@ -28,7 +29,20 @@ export class ImageController {
   
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor("file",{
-        dest:join(__dirname, '..', '..',"..", 'uploads', 'uploaded')
+      fileFilter: (req, file, cb) => {
+        console.log(file)
+        if (!file.mimetype.startsWith('image/')) {
+            return cb(new Error('Apenas arquivos de imagem são permitidos!'), false);
+        }
+        cb(null, true);
+      },
+      storage:diskStorage({
+                          destination: './uploads', // Diretório onde as imagens serão salvas
+                          filename: (req, file, cb) => {
+                              const uniqueSuffix = `${Date.now()}`;
+                              cb(null, `${uniqueSuffix}.png`); // Salvando como PNG
+                          },
+                      }),
     }))
     @Post('')
     async uploadImage(@Req() req: AuthRequest,@UploadedFile() file:Express.Multer.File) {
