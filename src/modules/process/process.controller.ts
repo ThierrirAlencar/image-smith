@@ -26,9 +26,16 @@ constructor(private processService: ProcessService) {}
       const schema = z.object({
         image_id: z.string().uuid(),
         output_filename: z.string().optional(),
+        type:z.enum([
+          "",
+          "Grayscale","Blur","Canny","Pixelate",
+          "BGR2RGB","BGR2HSV", "BGR2HLS","BGR2LUV",
+          "RGB_Boost","Negative","Brightness","Skin_Whitening",
+          "Heat","Sepia","Cartoon","Pencil_Sketh"
+        ]).default("")
       });
   
-      const {image_id,output_filename} = schema.parse(body);
+      const {image_id,output_filename,type} = schema.parse(body);
   
       try {
         const created = await this.processService.create({image_id,output_filename});

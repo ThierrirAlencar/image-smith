@@ -37,7 +37,7 @@ export class ImageController {
         cb(null, true);
       },
       storage:diskStorage({
-                          destination: './uploads', // Diretório onde as imagens serão salvas
+                          destination: './uploads/uploaded', // Diretório onde as imagens serão salvas
                           filename: (req, file, cb) => {
                               const uniqueSuffix = `${Date.now()}`;
                               cb(null, `${uniqueSuffix}.png`); // Salvando como PNG
@@ -57,7 +57,7 @@ export class ImageController {
   
       try {
         const result = await this.imageService.create({
-            original_filename,stored_filepath,user_favorite:false,user_id:userId
+            original_filename,stored_filepath:stored_filepath+original_filename,user_favorite:false,user_id:userId
         });
   
         return {

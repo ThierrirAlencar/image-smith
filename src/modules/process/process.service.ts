@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Image, image_processing, Prisma } from '@prisma/client';
+import { join } from 'path';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
 
 @Injectable()
 export class ProcessService {
-
+    protected basePath = join(__dirname, "../../../")
     constructor(private prisma:PrismaService){}
-
+    
     async create(data:Prisma.image_processingUncheckedCreateInput):Promise<image_processing>{
         const doesTheImageExists = await this.prisma.image.findUnique({
             where:{
@@ -121,4 +122,10 @@ export class ProcessService {
         return AllProcesses.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()).slice(0, 1)
 
     }
+
+    async handleProcessEffect(imagePathRelative:string){
+        const filePath = join(this.basePath,imagePathRelative)
+        
+    }
 }
+
