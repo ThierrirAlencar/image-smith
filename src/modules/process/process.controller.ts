@@ -16,11 +16,51 @@ import {
   import { AuthGuard } from '@nestjs/passport';
   import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { AuthRequest } from 'src/interfaces/authRequest';
+import { ImageService } from '../image/image.service';
 
-  
+enum EffectType {
+  None = 0,
+  Grayscale,
+  Blur,
+  Canny,
+  Pixelate,
+  BGR2RGB,
+  BGR2HSV,
+  BGR2HLS,
+  BGR2LUV,
+  RGB_Boost,
+  Negative,
+  Brightness,
+  Skin_Whitening,
+  Heat,
+  Sepia,
+  Cartoon,
+  Pencil_Sketch
+}
+
+const EffectMap: Record<string, EffectType> = {
+  "": EffectType.None,
+  Grayscale: EffectType.Grayscale,
+  Blur: EffectType.Blur,
+  Canny: EffectType.Canny,
+  Pixelate: EffectType.Pixelate,
+  BGR2RGB: EffectType.BGR2RGB,
+  BGR2HSV: EffectType.BGR2HSV,
+  BGR2HLS: EffectType.BGR2HLS,
+  BGR2LUV: EffectType.BGR2LUV,
+  RGB_Boost: EffectType.RGB_Boost,
+  Negative: EffectType.Negative,
+  Brightness: EffectType.Brightness,
+  Skin_Whitening: EffectType.Skin_Whitening,
+  Heat: EffectType.Heat,
+  Sepia: EffectType.Sepia,
+  Cartoon: EffectType.Cartoon,
+  Pencil_Sketh: EffectType.Pencil_Sketch, // cuidado aqui, você tinha escrito "Sketh"
+};
+
 @Controller('processes')
 export class ProcessController {
-constructor(private processService: ProcessService) {}
+constructor(private processService: ProcessService,private ImageService:ImageService) {}
     @Post()
     async create(@Req() req: AuthRequest, @Body() body: any) {
       const schema = z.object({
@@ -31,18 +71,34 @@ constructor(private processService: ProcessService) {}
           "Grayscale","Blur","Canny","Pixelate",
           "BGR2RGB","BGR2HSV", "BGR2HLS","BGR2LUV",
           "RGB_Boost","Negative","Brightness","Skin_Whitening",
-          "Heat","Sepia","Cartoon","Pencil_Sketh"
-        ]).default("")
+          "Heat","Sepia","Cartoon","Pencil_Sketch"
+        ]).default(""),
+        amount:z.object({
+          amountR:z.number({message:"Intensidade do efeito aplicado para a cor vermelha (também é usado como intensidade quando as outras cores não são nescessárias)"}),
+          amountG:z.number({message:"Intensidade do efeito aplicado para a cor verde"}).default(0),
+          amountB:z.number({message:"Intensidade do efeito aplicado para a cor azul"}).default(0)
+        })
       });
   
       const {image_id,output_filename,type} = schema.parse(body);
   
       try {
-        const created = await this.processService.create({image_id,output_filename});
+        const {stored_filepath,original_filename} = await this.ImageService.findOne(image_id)
+        const effectNumber: EffectType = EffectMap[type];
+        const fileFolderResponse = await this.processService.handleProcessEffect(stored_filepath+"/"+original_filename,effectNumber)
+
+        const created = await this.processService.create({image_id,output_filename:fileFolderResponse,operation:type,});
+
+        //carregar imagem para retornar como base64
+        const bufferResult = await this.ImageService.loadImage(fileFolderResponse)
+          // Transforma buffers em base64 e monta data URL
+        const base64 = bufferResult.toString('base64');
+
         return {
           statusCode: 201,
           description: 'Processamento criado com sucesso',
           process: created,
+          image:base64
         };
       } catch (err) {
         if (err instanceof EntityNotFoundError) {
