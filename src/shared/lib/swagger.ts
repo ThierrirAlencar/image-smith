@@ -3,7 +3,7 @@ import { OpenAPIObject } from "@nestjs/swagger";
 export const swaggerOptions:OpenAPIObject = {
     info:{
         title:"Image Forge",
-        version:"1.0.0",
+        version:"2.0.0",
         description:"Uma API completa para operações com Imagens",
         contact:{email:"cibatechcorp@gmail.com"},
         license:{
@@ -13,13 +13,15 @@ export const swaggerOptions:OpenAPIObject = {
     tags:[
       {name:"Images",description:"Rotas para gerenciar o upload de imagens para um usuário"},
       {name:"Processing",description:"Rotas utilizadas para processar imagens, aplicando efeitos e transformações para ela"},
-      {name:"Auth",description:"Rotas utilizadas para validação, registro e gerenciamento dos usuários"},
+      {name:"Auth",description:"Rotas utilizadas para validação de usuários"},
+      {name:"User",description:"Rotas utilizadas para gerenciamento de usuários"},
+      {name:"File",description:"Rotas utilizadas para gerenciamento interno de imagens"}
     ],
     openapi:"3.0.0",
     paths:{
       '/user': {
         get: {
-          tags:["Auth"],
+          tags:["User"],
           summary: 'Obter perfil do usuário',
           security: [{ bearerAuth: [] }],
           responses: {
@@ -43,7 +45,7 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
         put: {
-          tags:["Auth"],
+          tags:["User"],
           summary: 'Atualizar dados do usuário',
           security: [{ bearerAuth: [] }],
           requestBody: {
@@ -83,7 +85,7 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
         delete: {
-          tags:["Auth"],
+          tags:["User"],
           summary: 'Deletar usuário',
           security: [{ bearerAuth: [] }],
           responses: {
@@ -105,8 +107,8 @@ export const swaggerOptions:OpenAPIObject = {
             '500': { description: 'Erro desconhecido' },
           },
         },
-      post: {
-        tags:["Auth"],
+        post: {
+        tags:["User"],
         summary: 'Criar novo usuário',
         requestBody: {
           required: true,
@@ -724,10 +726,114 @@ export const swaggerOptions:OpenAPIObject = {
           }
         }
       }
+      },
+      "/file": {
+      "get": {
+        "tags":["File"],
+        "summary": "Carregar imagem",
+        "description": "Carrega uma imagem em base64 a partir do `image_id` fornecido no corpo da requisição.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoadFileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Imagem carregada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoadFileResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Imagem não encontrada"
+          },
+          "500": {
+            "description": "Erro interno ao carregar a imagem"
+          }
+        }
       }
+      },
+      "/file/{path}": {
+      "delete": {
+        "tags":["File"],
+        "summary": "Deletar arquivo",
+        "description": "Deleta o arquivo com o caminho informado.",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Caminho do arquivo"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Arquivo deletado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteFileResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Arquivo não encontrado"
+          }
+        }
+      }
+      },
+      "/file/rename": {
+      "patch": {
+        "tags":["File"],
+        "summary": "Renomear arquivo",
+        "description": "Renomeia um arquivo com base no `imageId` e novo nome fornecido.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameFileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Arquivo renomeado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RenameFileResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros obrigatórios ausentes"
+          },
+          "500": {
+            "description": "Erro ao renomear o arquivo"
+          }
+        }
+      }
+    }
     },
     components: {
       securitySchemes: {
+        
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
@@ -874,7 +980,75 @@ export const swaggerOptions:OpenAPIObject = {
           },
           required: ['imageId', 'user_favorite'],
         },
+        "LoadFileRequest": {
+          "type": "object",
+          "properties": {
+            "image_id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": ["image_id"]
+        },
+        "LoadFileResponse": {
+          "type": "object",
+          "properties": {
+            "Description": {
+              "type": "string",
+              "example": "Imagem Carregada com sucesso"
+            },
+            "image": {
+              "type": "string",
+              "description": "Imagem em formato base64"
+            }
+          }
+        },
+        "DeleteFileResponse": {
+          "type": "object",
+          "properties": {
+            "statusCode": {
+              "type": "integer",
+              "example": 200
+            },
+            "message": {
+              "type": "string",
+              "example": "Arquivo deletado com sucesso"
+            }
+          }
+        },
+        "RenameFileRequest": {
+          "type": "object",
+          "properties": {
+            "imageId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "newFileName": {
+              "type": "string",
+              "example": "nova_imagem.png"
+            }
+          },
+          "required": ["imageId", "newFileName"]
+        },
+        "RenameFileResponse": {
+          "type": "object",
+          "properties": {
+            "statusCode": {
+              "type": "integer",
+              "example": 200
+            },
+            "message": {
+              "type": "string",
+              "example": "Arquivo renomeado com sucesso"
+            },
+            "newPath": {
+              "type": "string",
+              "example": "/path/to/nova_imagem.png"
+            }
+          }
       },
-        
+      
+    }
+
     },
 }

@@ -97,18 +97,6 @@ export class ImageService {
         return doesTheImageExists
     }
 
-    //Retorna as imagens devidamente carregadas como buffers
-    async loadImage(imagePath: string): Promise<Buffer> {
-    
-        try {
-          const imageBuffer = fs.readFile(imagePath);
-          return imageBuffer;
-        } catch (error) {
-          const fallbackBuffer = fs.readFile(this.notFoundFilePath);
-          return fallbackBuffer;
-        }
-    }
-
     //Retorna as imagens favoritas
     async sendFavorites(userId:string):Promise<Partial<Image>[]>{
         const doesTheUserExists = await this.prismaService.user.findUnique({

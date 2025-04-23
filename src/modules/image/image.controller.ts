@@ -44,6 +44,9 @@ export class ImageController {
                               cb(null, `${uniqueSuffix}.png`); // Salvando como PNG
                           },
                       }),
+      limits:{
+        fileSize:5*1000000,//5mb
+      }
     }))
     @Post('')
     async uploadImage(@Req() req: AuthRequest,@UploadedFile() file:Express.Multer.File) {

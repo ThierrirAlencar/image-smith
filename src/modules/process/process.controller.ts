@@ -17,6 +17,7 @@ import {
   import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { AuthRequest } from 'src/interfaces/authRequest';
 import { ImageService } from '../image/image.service';
+import { FileService } from '../file/file.service';
 
 enum EffectType {
   None = 0,
@@ -60,7 +61,7 @@ const EffectMap: Record<string, EffectType> = {
 
 @Controller('processes')
 export class ProcessController {
-constructor(private processService: ProcessService,private ImageService:ImageService) {}
+constructor(private processService: ProcessService,private ImageService:ImageService,private fileHandler:FileService) {}
     @Post()
     async create(@Req() req: AuthRequest, @Body() body: any) {
       const schema = z.object({
@@ -90,7 +91,7 @@ constructor(private processService: ProcessService,private ImageService:ImageSer
         const created = await this.processService.create({image_id,output_filename:fileFolderResponse,operation:type,});
 
         //carregar imagem para retornar como base64
-        const bufferResult = await this.ImageService.loadImage(fileFolderResponse)
+        const bufferResult = await this.fileHandler.loadImage(fileFolderResponse)
           // Transforma buffers em base64 e monta data URL
         const base64 = bufferResult.toString('base64');
 
