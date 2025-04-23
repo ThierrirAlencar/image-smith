@@ -25,9 +25,6 @@ async function bootstrap() {
 
   app.use((req, res:Response, next) => {
     console.log(`Nova requisição recebida: ${req.method} ${req.url} `);
-
-    log(req.body)
-    
     next();
   });
 

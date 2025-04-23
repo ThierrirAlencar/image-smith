@@ -117,7 +117,7 @@ export class UserService {
         if(!doesThePasswordMatch){
             throw new InvalidPasswordError(email)
         }
-        console.log("Chegou aqui")
+        
         return{
             userId:doesTheUserExists.id
         }

@@ -267,6 +267,42 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
+      put: {
+        tags: ['Images'],
+        summary: 'Atualizar imagem (favoritar/desfavoritar)',
+        description: 'Atualiza as informações de uma imagem, como marcar ou desmarcar como favorita',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/UpdateImageDto',
+              },
+            },
+          },
+        },
+        responses: {
+          '201': {
+            description: 'Imagem atualizada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    statusCode: { type: 'integer', example: 201 },
+                    description: { type: 'string', example: 'Imagem atualizada com sucesso' },
+                    image: { type: 'object' }, // Aqui também pode ser detalhado conforme o modelo de imagem
+                  },
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Erro ao salvar imagem',
+          },
+        },
+      },
       delete: {
         tags: ['Images'],
         summary: 'Deletar imagem do usuário',
@@ -508,6 +544,40 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
+      'images/favorite': {
+        get: {
+          tags: ['Images'],
+          summary: 'Listar imagens favoritas do usuário autenticado',
+          description: 'Retorna todas as imagens associadas ao usuário autenticado',
+          security: [{ bearerAuth: [] }],
+          responses: {
+            '200': {
+              description: 'Lista de imagens retornada com sucesso',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      statusCode: { type: 'integer', example: 200 },
+                      description: { type: 'string', example: 'Lista de imagens retornada com sucesso' },
+                      images: {
+                        type: 'array',
+                        items: { type: 'object' }, // Você pode definir melhor esse schema se quiser detalhar as propriedades da imagem
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            '404': {
+              description: 'Usuário não encontrado',
+            },
+            '500': {
+              description: 'Erro interno do servidor',
+            },
+          },
+        },
+      },
     },
     components: {
       securitySchemes: {
@@ -639,6 +709,24 @@ export const swaggerOptions:OpenAPIObject = {
             },
           },
         },  
+        UpdateImageDto: {
+          type: 'object',
+          properties: {
+            imageId: {
+              type: 'string',
+              format: 'uuid',
+              description: 'UUID da imagem a ser atualizada',
+              example: 'b2f04b5e-0b0d-4f67-aed7-b6a5f8c94e91',
+            },
+            user_favorite: {
+              type: 'boolean',
+              description: 'Marca se a imagem é favorita ou não pelo usuário',
+              example: true,
+              default: false,
+            },
+          },
+          required: ['imageId', 'user_favorite'],
+        },
       },
         
     },
