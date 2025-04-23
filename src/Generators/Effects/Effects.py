@@ -174,7 +174,7 @@ else:
             pass;
         
             
-    absolute_path = (os.path.abspath(output_path)+"\ "+file_name+".png").strip()
+    absolute_path = (os.path.abspath(output_path)+"/"+file_name+".png").strip()
     cv.imwrite(absolute_path,img)
     print(absolute_path)
     pass

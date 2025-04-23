@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Image, Prisma } from '@prisma/client';
+import { join } from 'path';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class ImageService {
+    protected basePath = join(__dirname, "../../../")
+    protected notFoundFilePath = join(this.basePath,"public/Image-not-found.png")
     constructor(private prismaService:PrismaService){}
     async create(data:Prisma.ImageUncheckedCreateInput):Promise<Partial<Image>>{
         const {original_filename,stored_filepath,user_id} = data
@@ -87,4 +91,17 @@ export class ImageService {
         })
         return doesTheImageExists
     }
+
+    //Retorna as imagens devidamente carregadas como buffers
+    async loadImage(imagePath: string): Promise<Buffer> {
+    
+        try {
+          const imageBuffer = fs.readFile(imagePath);
+          return imageBuffer;
+        } catch (error) {
+          const fallbackBuffer = fs.readFile(this.notFoundFilePath);
+          return fallbackBuffer;
+        }
+    }
 }
+

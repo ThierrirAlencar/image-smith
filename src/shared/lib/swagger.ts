@@ -332,15 +332,15 @@ export const swaggerOptions:OpenAPIObject = {
       },
       '/processes': {
         post: {
-          tags:["Processing"],
-          summary: 'Criar processamento de imagem',
-          description: 'Cria um novo processamento de uma imagem com base em seu ID.',
+          tags: ['Processing'],
+          summary: 'Aplica efeitos em uma imagem',
+          description: 'Recebe uma imagem identificada por `image_id` e aplica um efeito visual, retornando a imagem em base64.',
           requestBody: {
             required: true,
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/CreateImageProcessDto',
+                  $ref: '#/components/schemas/ProcessRequest',
                 },
               },
             },
@@ -348,12 +348,19 @@ export const swaggerOptions:OpenAPIObject = {
           responses: {
             '201': {
               description: 'Processamento criado com sucesso',
+              content: {
+                'application/json': {
+                  schema: {
+                    $ref: '#/components/schemas/ProcessResponse',
+                  },
+                },
+              },
             },
             '404': {
               description: 'Imagem não encontrada',
             },
             '500': {
-              description: 'Erro desconhecido',
+              description: 'Erro interno no servidor',
             },
           },
         },
@@ -537,6 +544,18 @@ export const swaggerOptions:OpenAPIObject = {
           },
           required: ['image_id'],
         },
+        EffectTypeEnum: {
+          type: 'string',
+          description: 'Tipo de efeito a ser aplicado na imagem',
+          enum: [
+            '',
+            'Grayscale', 'Blur', 'Canny', 'Pixelate',
+            'BGR2RGB', 'BGR2HSV', 'BGR2HLS', 'BGR2LUV',
+            'RGB_Boost', 'Negative', 'Brightness', 'Skin_Whitening',
+            'Heat', 'Sepia', 'Cartoon', 'Pencil_Sketch'
+          ],
+          default: '',
+        },
         UpdateImageProcessDto: {
           type: 'object',
           properties: {
@@ -550,6 +569,77 @@ export const swaggerOptions:OpenAPIObject = {
             },
           },
         },
+        ProcessRequest: {
+          type: 'object',
+          properties: {
+            image_id: {
+              type: 'string',
+              format: 'uuid',
+              description: 'ID da imagem a ser processada',
+            },
+            output_filename: {
+              type: 'string',
+              nullable: true,
+              description: 'Nome opcional do arquivo de saída',
+            },
+            type: {
+              type: 'string',
+              enum: [
+                '',
+                'Grayscale', 'Blur', 'Canny', 'Pixelate',
+                'BGR2RGB', 'BGR2HSV', 'BGR2HLS', 'BGR2LUV',
+                'RGB_Boost', 'Negative', 'Brightness', 'Skin_Whitening',
+                'Heat', 'Sepia', 'Cartoon', 'Pencil_Sketch'
+              ],
+              default: '',
+              description: 'Tipo de efeito a ser aplicado',
+            },
+            amount: {
+              type: 'object',
+              properties: {
+                amountR: {
+                  type: 'number',
+                  description: 'Intensidade do efeito aplicado para a cor vermelha (também é usado como intensidade quando as outras cores não são necessárias)',
+                },
+                amountG: {
+                  type: 'number',
+                  default: 0,
+                  description: 'Intensidade do efeito aplicado para a cor verde',
+                },
+                amountB: {
+                  type: 'number',
+                  default: 0,
+                  description: 'Intensidade do efeito aplicado para a cor azul',
+                },
+              },
+              required: ['amountR'],
+            },
+          },
+          required: ['image_id', 'amount'],
         },
+        ProcessResponse: {
+          type: 'object',
+          properties: {
+            statusCode: {
+              type: 'number',
+              example: 201,
+            },
+            description: {
+              type: 'string',
+              example: 'Processamento criado com sucesso',
+            },
+            process: {
+              type: 'object',
+              description: 'Dados do processo de imagem criado',
+            },
+            image: {
+              type: 'string',
+              format: 'byte',
+              description: 'Imagem processada codificada em base64',
+            },
+          },
+        },  
+      },
+        
     },
 }
