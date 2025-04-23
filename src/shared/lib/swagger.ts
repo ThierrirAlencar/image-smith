@@ -578,6 +578,153 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
+      "/auth": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Enviar código de recuperação por e-mail",
+        "description": "Envia um e-mail com um código de recuperação de senha para o endereço fornecido.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Endereço de e-mail do usuário"
+                  }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "E-mail enviado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "DescriptioN": {
+                      "type": "string",
+                      "example": "Successfully sent email"
+                    },
+                    "codeString": {
+                      "type": "string",
+                      "description": "Código de verificação enviado por e-mail"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao enviar o e-mail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Description": {
+                      "type": "string",
+                      "example": "Email error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Auth"],
+        "summary": "Atualizar senha do usuário",
+        "description": "Atualiza a senha do usuário com base em um código de recuperação válido.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "passport": {
+                    "type": "string",
+                    "description": "Identificador do usuário"
+                  },
+                  "refString": {
+                    "type": "string",
+                    "description": "Código de recuperação enviado por e-mail"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "description": "Nova senha"
+                  }
+                },
+                "required": ["passport", "refString", "newPassword"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Senha atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "DescriptioN": {
+                      "type": "string",
+                      "example": "Successfully sent email"
+                    },
+                    "userUpdated": {
+                      "type": "string",
+                      "description": "E-mail do usuário atualizado"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado ou código inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Description": {
+                      "type": "string",
+                      "enum": ["User not found", "Provided code was wrong"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno ao atualizar senha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Description": {
+                      "type": "string",
+                      "example": "Email error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      }
     },
     components: {
       securitySchemes: {
