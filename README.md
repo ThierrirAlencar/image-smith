@@ -44,3 +44,4 @@ Or execute [build file](buid.sh)
 # The Python and Javascript async use
 
 It's not a doubt that python is a fast and usefull tool for building aplications with easy, while javascript with its due support of nodeJs and typescript can power up a robust backend api. In this project the relation between these two languages was explored and enhanced. Python provides us great tools for working with images and files, like OpenCV and Pillow that gives us an easy image manipulation alternative. 
+A challenge of working with both techs was the lack of compatibility between then, this was fixed with the use of cmd scripting inside node
