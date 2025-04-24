@@ -11,6 +11,7 @@ import {
     UploadedFile,
     Res,
     Put,
+    Param,
   } from '@nestjs/common';
   import { ImageService } from './image.service';
   import { AuthGuard } from '@nestjs/passport';
@@ -61,7 +62,7 @@ export class ImageController {
   
       try {
         const result = await this.imageService.create({
-            original_filename,stored_filepath:stored_filepath+original_filename,user_favorite:false,user_id:userId
+            original_filename,stored_filepath:stored_filepath+"/"+original_filename,user_favorite:false,user_id:userId
         });
   
         return {
@@ -182,12 +183,9 @@ export class ImageController {
     }
   
     @UseGuards(AuthGuard('jwt'))
-    @Get('')
-    async getOne(@Req() req: AuthRequest) {
-      const { id } = z
-        .object({ id: z.string().uuid() })
-        .parse(req.user);
-  
+    @Get(':id')
+    async getOne(@Param("id") id: string) {
+
       try {
         const image = await this.imageService.findOne(id);
   

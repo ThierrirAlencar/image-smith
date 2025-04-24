@@ -98,7 +98,7 @@ export class ProcessService {
         if(!doesTheUserExists){
             throw new EntityNotFoundError("User",userId)
         }
-        var AllProcesses:image_processing[]
+        var AllProcesses:image_processing[] = []
 
         const userAllList = await this.prisma.image.findMany({
             where:{
@@ -117,7 +117,7 @@ export class ProcessService {
                     }
                 })
 
-                AllProcesses.concat(loadList)
+                AllProcesses = AllProcesses.concat(loadList)
             }
         ))
         

@@ -86,7 +86,7 @@ constructor(private processService: ProcessService,private ImageService:ImageSer
       try {
         const {stored_filepath,original_filename} = await this.ImageService.findOne(image_id)
         const effectNumber: EffectType = EffectMap[type];
-        const fileFolderResponse = await this.processService.handleProcessEffect(stored_filepath+"/"+original_filename,effectNumber)
+        const fileFolderResponse = await this.processService.handleProcessEffect(stored_filepath,effectNumber)
 
         const created = await this.processService.create({image_id,output_filename:fileFolderResponse,operation:type,});
 
@@ -266,7 +266,22 @@ constructor(private processService: ProcessService,private ImageService:ImageSer
                     HttpStatus.NOT_FOUND,
                 );
             }
-
+            if (err instanceof EntityNotFoundError) {
+              const notFoundEntity = err.entity
+              const notFoundId = err.id
+  
+              let description = 'Entidade não encontrada'
+              if (notFoundEntity === 'User') {
+                  description = 'Usuário não encontrado'
+              } else if (notFoundEntity === 'ImageProcess' && notFoundId === 'recent') {
+                  description = 'Processamento não encontrado'
+              }
+  
+              throw new HttpException({
+                  description,
+                  error: err.message,
+              }, HttpStatus.NOT_FOUND);
+          }
             throw new HttpException(
                 {
                     description: 'Erro desconhecido',

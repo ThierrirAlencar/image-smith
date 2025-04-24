@@ -6,6 +6,8 @@
  * @extends {Error}
  */
 export class EntityNotFoundError extends Error {
+    entity: any;
+  id: any;
     /**
      * Cria uma instância de EntityNotFoundError.
      * 
