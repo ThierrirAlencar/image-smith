@@ -23,10 +23,16 @@ Setup the database (be sure to configure you .env)
 $ npx prisma migrate dev
 ```
 
-Project Enviroment (for linux deploy)
+run the app
+```bash 
+$ npm run start
+```
+
+(Optional) Setup Project Enviroment. Useful for venv dependency issues (for linux only)
 ```bash
 $ npm run deploy
 ```
+
 Or execute [build file](buid.sh)
 
 # Tech Stack 🖥️
