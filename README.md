@@ -35,6 +35,12 @@ $ npm run deploy
 
 Or execute [build file](buid.sh)
 
+# Known issues 🔎
+
+- Redis and BulqMQ
+- Some Effects aren't working as espected and needed to be removed
+- Cache strategy not applied
+
 # Tech Stack 🖥️
 
 - **NestJS (Fastify)**
