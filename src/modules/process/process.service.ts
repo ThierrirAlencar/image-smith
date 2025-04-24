@@ -3,10 +3,13 @@ import { Image, image_processing, Prisma } from '@prisma/client';
 import { join } from 'path';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
-
+import { promises as fs } from 'fs';
+import { promisify } from 'util';
+import { exec } from 'child_process';
 @Injectable()
 export class ProcessService {
     protected basePath = join(__dirname, "../../../")
+    protected notFoundFilePath = join(this.basePath,"public/Image-not-found.png")
     constructor(private prisma:PrismaService){}
     
     async create(data:Prisma.image_processingUncheckedCreateInput):Promise<image_processing>{
@@ -95,7 +98,7 @@ export class ProcessService {
         if(!doesTheUserExists){
             throw new EntityNotFoundError("User",userId)
         }
-        var AllProcesses:image_processing[]
+        var AllProcesses:image_processing[] = []
 
         const userAllList = await this.prisma.image.findMany({
             where:{
@@ -114,7 +117,7 @@ export class ProcessService {
                     }
                 })
 
-                AllProcesses.concat(loadList)
+                AllProcesses = AllProcesses.concat(loadList)
             }
         ))
         
@@ -123,9 +126,21 @@ export class ProcessService {
 
     }
 
-    async handleProcessEffect(imagePathRelative:string){
-        const filePath = join(this.basePath,imagePathRelative)
-        
-    }
+    async handleProcessEffect(imagePathRelative: string, effectIndex: number): Promise<string> {
+        const filePath = join(this.basePath, imagePathRelative);
+        const execAsync = promisify(exec)
+        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py')} ${filePath} ${effectIndex} 5 5 5`;
+        console.log(`running: ${command}`);
+      
+        try {
+          const { stdout } = await execAsync(command);
+          console.log('Python stdout:', stdout);
+          return stdout.trim(); // retorna apenas o texto da saída
+        } catch (error) {
+          console.error('Erro ao executar script Python:', error);
+          throw new Error('Erro ao processar efeito na imagem.');
+        }
+      }
+
 }
 

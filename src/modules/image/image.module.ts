@@ -4,9 +4,10 @@ import { ImageController } from './image.controller';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { FileService } from '../file/file.service';
 
 @Module({
-  providers: [ImageService,PrismaService,AuthService,JwtService],
+  providers: [ImageService,PrismaService,AuthService,JwtService,FileService],
   controllers: [ImageController]
 })
 

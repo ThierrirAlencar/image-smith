@@ -3,7 +3,7 @@ import { OpenAPIObject } from "@nestjs/swagger";
 export const swaggerOptions:OpenAPIObject = {
     info:{
         title:"Image Forge",
-        version:"1.0.0",
+        version:"2.0.0",
         description:"Uma API completa para operações com Imagens",
         contact:{email:"cibatechcorp@gmail.com"},
         license:{
@@ -13,13 +13,15 @@ export const swaggerOptions:OpenAPIObject = {
     tags:[
       {name:"Images",description:"Rotas para gerenciar o upload de imagens para um usuário"},
       {name:"Processing",description:"Rotas utilizadas para processar imagens, aplicando efeitos e transformações para ela"},
-      {name:"Auth",description:"Rotas utilizadas para validação, registro e gerenciamento dos usuários"},
+      {name:"Auth",description:"Rotas utilizadas para validação de usuários"},
+      {name:"User",description:"Rotas utilizadas para gerenciamento de usuários"},
+      {name:"File",description:"Rotas utilizadas para gerenciamento interno de imagens"}
     ],
     openapi:"3.0.0",
     paths:{
       '/user': {
         get: {
-          tags:["Auth"],
+          tags:["User"],
           summary: 'Obter perfil do usuário',
           security: [{ bearerAuth: [] }],
           responses: {
@@ -43,7 +45,7 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
         put: {
-          tags:["Auth"],
+          tags:["User"],
           summary: 'Atualizar dados do usuário',
           security: [{ bearerAuth: [] }],
           requestBody: {
@@ -83,7 +85,7 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
         delete: {
-          tags:["Auth"],
+          tags:["User"],
           summary: 'Deletar usuário',
           security: [{ bearerAuth: [] }],
           responses: {
@@ -105,8 +107,8 @@ export const swaggerOptions:OpenAPIObject = {
             '500': { description: 'Erro desconhecido' },
           },
         },
-      post: {
-        tags:["Auth"],
+        post: {
+        tags:["User"],
         summary: 'Criar novo usuário',
         requestBody: {
           required: true,
@@ -267,6 +269,42 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
+      put: {
+        tags: ['Images'],
+        summary: 'Atualizar imagem (favoritar/desfavoritar)',
+        description: 'Atualiza as informações de uma imagem, como marcar ou desmarcar como favorita',
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/UpdateImageDto',
+              },
+            },
+          },
+        },
+        responses: {
+          '201': {
+            description: 'Imagem atualizada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    statusCode: { type: 'integer', example: 201 },
+                    description: { type: 'string', example: 'Imagem atualizada com sucesso' },
+                    image: { type: 'object' }, // Aqui também pode ser detalhado conforme o modelo de imagem
+                  },
+                },
+              },
+            },
+          },
+          '500': {
+            description: 'Erro ao salvar imagem',
+          },
+        },
+      },
       delete: {
         tags: ['Images'],
         summary: 'Deletar imagem do usuário',
@@ -332,15 +370,15 @@ export const swaggerOptions:OpenAPIObject = {
       },
       '/processes': {
         post: {
-          tags:["Processing"],
-          summary: 'Criar processamento de imagem',
-          description: 'Cria um novo processamento de uma imagem com base em seu ID.',
+          tags: ['Processing'],
+          summary: 'Aplica efeitos em uma imagem',
+          description: 'Recebe uma imagem identificada por `image_id` e aplica um efeito visual, retornando a imagem em base64.',
           requestBody: {
             required: true,
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/CreateImageProcessDto',
+                  $ref: '#/components/schemas/ProcessRequest',
                 },
               },
             },
@@ -348,12 +386,19 @@ export const swaggerOptions:OpenAPIObject = {
           responses: {
             '201': {
               description: 'Processamento criado com sucesso',
+              content: {
+                'application/json': {
+                  schema: {
+                    $ref: '#/components/schemas/ProcessResponse',
+                  },
+                },
+              },
             },
             '404': {
               description: 'Imagem não encontrada',
             },
             '500': {
-              description: 'Erro desconhecido',
+              description: 'Erro interno no servidor',
             },
           },
         },
@@ -501,9 +546,294 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
+      'images/favorite': {
+        get: {
+          tags: ['Images'],
+          summary: 'Listar imagens favoritas do usuário autenticado',
+          description: 'Retorna todas as imagens associadas ao usuário autenticado',
+          security: [{ bearerAuth: [] }],
+          responses: {
+            '200': {
+              description: 'Lista de imagens retornada com sucesso',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      statusCode: { type: 'integer', example: 200 },
+                      description: { type: 'string', example: 'Lista de imagens retornada com sucesso' },
+                      images: {
+                        type: 'array',
+                        items: { type: 'object' }, // Você pode definir melhor esse schema se quiser detalhar as propriedades da imagem
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            '404': {
+              description: 'Usuário não encontrado',
+            },
+            '500': {
+              description: 'Erro interno do servidor',
+            },
+          },
+        },
+      },
+      "/auth": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Enviar código de recuperação por e-mail",
+        "description": "Envia um e-mail com um código de recuperação de senha para o endereço fornecido.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Endereço de e-mail do usuário"
+                  }
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "E-mail enviado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "DescriptioN": {
+                      "type": "string",
+                      "example": "Successfully sent email"
+                    },
+                    "codeString": {
+                      "type": "string",
+                      "description": "Código de verificação enviado por e-mail"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao enviar o e-mail",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Description": {
+                      "type": "string",
+                      "example": "Email error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Auth"],
+        "summary": "Atualizar senha do usuário",
+        "description": "Atualiza a senha do usuário com base em um código de recuperação válido.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "passport": {
+                    "type": "string",
+                    "description": "Identificador do usuário"
+                  },
+                  "refString": {
+                    "type": "string",
+                    "description": "Código de recuperação enviado por e-mail"
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "description": "Nova senha"
+                  }
+                },
+                "required": ["passport", "refString", "newPassword"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Senha atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "DescriptioN": {
+                      "type": "string",
+                      "example": "Successfully sent email"
+                    },
+                    "userUpdated": {
+                      "type": "string",
+                      "description": "E-mail do usuário atualizado"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado ou código inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Description": {
+                      "type": "string",
+                      "enum": ["User not found", "Provided code was wrong"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno ao atualizar senha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "Description": {
+                      "type": "string",
+                      "example": "Email error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      },
+      "/file": {
+      "get": {
+        "tags":["File"],
+        "summary": "Carregar imagem",
+        "description": "Carrega uma imagem em base64 a partir do `image_id` fornecido no corpo da requisição.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoadFileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Imagem carregada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoadFileResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Imagem não encontrada"
+          },
+          "500": {
+            "description": "Erro interno ao carregar a imagem"
+          }
+        }
+      }
+      },
+      "/file/{path}": {
+      "delete": {
+        "tags":["File"],
+        "summary": "Deletar arquivo",
+        "description": "Deleta o arquivo com o caminho informado.",
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Caminho do arquivo"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Arquivo deletado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteFileResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Arquivo não encontrado"
+          }
+        }
+      }
+      },
+      "/file/rename": {
+      "patch": {
+        "tags":["File"],
+        "summary": "Renomear arquivo",
+        "description": "Renomeia um arquivo com base no `imageId` e novo nome fornecido.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameFileRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Arquivo renomeado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RenameFileResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros obrigatórios ausentes"
+          },
+          "500": {
+            "description": "Erro ao renomear o arquivo"
+          }
+        }
+      }
+    }
     },
     components: {
       securitySchemes: {
+        
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
@@ -537,6 +867,18 @@ export const swaggerOptions:OpenAPIObject = {
           },
           required: ['image_id'],
         },
+        EffectTypeEnum: {
+          type: 'string',
+          description: 'Tipo de efeito a ser aplicado na imagem',
+          enum: [
+            '',
+            'Grayscale', 'Blur', 'Canny', 'Pixelate',
+            'BGR2RGB', 'BGR2HSV', 'BGR2HLS', 'BGR2LUV',
+            'RGB_Boost', 'Negative', 'Brightness', 'Skin_Whitening',
+            'Heat', 'Sepia', 'Cartoon', 'Pencil_Sketch'
+          ],
+          default: '',
+        },
         UpdateImageProcessDto: {
           type: 'object',
           properties: {
@@ -550,6 +892,163 @@ export const swaggerOptions:OpenAPIObject = {
             },
           },
         },
+        ProcessRequest: {
+          type: 'object',
+          properties: {
+            image_id: {
+              type: 'string',
+              format: 'uuid',
+              description: 'ID da imagem a ser processada',
+            },
+            output_filename: {
+              type: 'string',
+              nullable: true,
+              description: 'Nome opcional do arquivo de saída',
+            },
+            type: {
+              type: 'string',
+              enum: [
+                '',
+                'Grayscale', 'Blur', 'Canny', 'Pixelate',
+                'BGR2RGB', 'BGR2HSV', 'BGR2HLS', 'BGR2LUV',
+                'RGB_Boost', 'Negative', 'Brightness', 'Skin_Whitening',
+                'Heat', 'Sepia', 'Cartoon', 'Pencil_Sketch'
+              ],
+              default: '',
+              description: 'Tipo de efeito a ser aplicado',
+            },
+            amount: {
+              type: 'object',
+              properties: {
+                amountR: {
+                  type: 'number',
+                  description: 'Intensidade do efeito aplicado para a cor vermelha (também é usado como intensidade quando as outras cores não são necessárias)',
+                },
+                amountG: {
+                  type: 'number',
+                  default: 0,
+                  description: 'Intensidade do efeito aplicado para a cor verde',
+                },
+                amountB: {
+                  type: 'number',
+                  default: 0,
+                  description: 'Intensidade do efeito aplicado para a cor azul',
+                },
+              },
+              required: ['amountR'],
+            },
+          },
+          required: ['image_id', 'amount'],
         },
+        ProcessResponse: {
+          type: 'object',
+          properties: {
+            statusCode: {
+              type: 'number',
+              example: 201,
+            },
+            description: {
+              type: 'string',
+              example: 'Processamento criado com sucesso',
+            },
+            process: {
+              type: 'object',
+              description: 'Dados do processo de imagem criado',
+            },
+            image: {
+              type: 'string',
+              format: 'byte',
+              description: 'Imagem processada codificada em base64',
+            },
+          },
+        },  
+        UpdateImageDto: {
+          type: 'object',
+          properties: {
+            imageId: {
+              type: 'string',
+              format: 'uuid',
+              description: 'UUID da imagem a ser atualizada',
+              example: 'b2f04b5e-0b0d-4f67-aed7-b6a5f8c94e91',
+            },
+            user_favorite: {
+              type: 'boolean',
+              description: 'Marca se a imagem é favorita ou não pelo usuário',
+              example: true,
+              default: false,
+            },
+          },
+          required: ['imageId', 'user_favorite'],
+        },
+        "LoadFileRequest": {
+          "type": "object",
+          "properties": {
+            "image_id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": ["image_id"]
+        },
+        "LoadFileResponse": {
+          "type": "object",
+          "properties": {
+            "Description": {
+              "type": "string",
+              "example": "Imagem Carregada com sucesso"
+            },
+            "image": {
+              "type": "string",
+              "description": "Imagem em formato base64"
+            }
+          }
+        },
+        "DeleteFileResponse": {
+          "type": "object",
+          "properties": {
+            "statusCode": {
+              "type": "integer",
+              "example": 200
+            },
+            "message": {
+              "type": "string",
+              "example": "Arquivo deletado com sucesso"
+            }
+          }
+        },
+        "RenameFileRequest": {
+          "type": "object",
+          "properties": {
+            "imageId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "newFileName": {
+              "type": "string",
+              "example": "nova_imagem.png"
+            }
+          },
+          "required": ["imageId", "newFileName"]
+        },
+        "RenameFileResponse": {
+          "type": "object",
+          "properties": {
+            "statusCode": {
+              "type": "integer",
+              "example": 200
+            },
+            "message": {
+              "type": "string",
+              "example": "Arquivo renomeado com sucesso"
+            },
+            "newPath": {
+              "type": "string",
+              "example": "/path/to/nova_imagem.png"
+            }
+          }
+      },
+      
+    }
+
     },
 }
