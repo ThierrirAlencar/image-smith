@@ -1,5 +1,7 @@
 <p align="center" text-align="center"><img src="https://github.com/user-attachments/assets/1c239555-822d-45ea-9b1f-87e5885c6b55"/></p>
-<p align="center" text-align="center">An image manipulation API with built-in effects, transformation and <br> conversion tools for images.</p> <br>
+
+<p align="center" text-align="center">A image manipulation API with built-in effects, transformation and <br> conversion for images.</p> <br>
+
 
 
 
@@ -50,7 +52,9 @@ $ npm run deploy
 
 Or execute [build file](buid.sh)
 
+
 # Known issues ⚙️
+
 
 - Redis and BulqMQ
 - Some Effects aren't working as espected and needed to be removed
@@ -68,10 +72,10 @@ Or execute [build file](buid.sh)
 - **OpenCV**
 - **Python**
 
+
 # Bucket S3 from Supabase Client and cloud use 🔎
 The web is now dominated by cloud and the use of remote file storage has become a standard. In this project, Supabase's S3-compatible bucket system was used to manage and store images uploaded by users. This integration allowed for scalable, secure, and public access to assets used during the processing flow. Files uploaded via the Supabase client could be accessed directly through public URLs or downloaded by the Node.js backend when needed, ensuring a seamless interaction between the storage layer and the image processing scripts. This cloud-based approach minimized local dependencies and enabled the backend to operate in a stateless and efficient manner.
 
-# The Python and Javascript async use 🔎
-
+# The Python and Javascript async use
 It's not a doubt that python is a fast and usefull tool for building aplications with easy, while javascript with its due support of nodeJs and typescript can power up a robust backend api. In this project the relation between these two languages was explored and enhanced. Python provides us great tools for working with images and files, like OpenCV and Pillow that gives us an easy image manipulation alternative. 
 A challenge of working with both techs was the lack of compatibility between then, this was fixed with the use of cmd scripting inside node
