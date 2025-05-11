@@ -25,10 +25,16 @@ import { log } from 'console';
 import { join } from 'path';
 import { diskStorage, memoryStorage } from 'multer';
 import { SupabaseService } from './supabase.service';
+import { UserService } from '../user/user.service';
   
 @Controller('images')
 export class ImageController {
-    constructor(private imageService: ImageService, private authService:AuthService,private supabaseService:SupabaseService) {}
+    constructor(
+      private imageService: ImageService,
+      private supabaseService:SupabaseService,
+      private userService:UserService
+
+    ) {}
   
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor("file",{
@@ -49,20 +55,43 @@ export class ImageController {
       const { id: userId } = z
         .object({ id: z.string().uuid() })
         .parse(req.user);
-  
-      const {
-            original_filename,public_url:stored_filepath
-            } = await this.supabaseService.uploadToSupabase(file,userId)
+      //Loads User for Storage
+      const user = await this.userService.userProfile(userId)
+
+      //Uploads the Image to the S3 Supabase Bucket
+      const {original_filename,public_url:stored_filepath} = await this.supabaseService
+                                                                    .uploadToSupabase({
+                                                                      buffer:file.buffer,mimetype:file.mimetype,originalname:file.originalname
+                                                                    },`${user.name}/images`)
   
       try {
-        const result = await this.imageService.create({
-            original_filename,stored_filepath,user_favorite:false,user_id:userId
+        console.log(stored_filepath)
+        const {
+          Id,
+          created_at,
+          original_filename:result_fileName,
+          process_filepath:result_process_filePath,
+          size,
+          stored_filepath:result_stored_filePath,
+          updated_at} = await this.imageService.create({
+            original_filename,
+            stored_filepath,
+            user_favorite:false,
+            user_id:userId
         });
   
         return {
           statusCode: 201,
           description: 'Imagem enviada com sucesso',
-          image: result,
+          image: {
+            Id,
+            created_at,
+            original_filename:result_fileName,
+            process_filepath:result_process_filePath,
+            size,
+            stored_filepath:result_stored_filePath,
+            updated_at
+          },
         };
       } catch (err) {
         throw new HttpException(
@@ -179,14 +208,16 @@ export class ImageController {
     @UseGuards(AuthGuard('jwt'))
     @Get(':id')
     async getOne(@Param("id") id: string) {
-
+      
       try {
-        const image = await this.imageService.findOne(id);
+        const {Id,created_at,original_filename,process_filepath,size,stored_filepath,updated_at,user_favorite} = await this.imageService.findOne(id);
   
         return {
           statusCode: 200,
           description: 'Imagem retornada com sucesso',
-          image,
+          image:{
+            Id,created_at,original_filename,process_filepath,size,stored_filepath,updated_at,user_favorite
+          },
         };
       } catch (err) {
         if (err instanceof EntityNotFoundError) {

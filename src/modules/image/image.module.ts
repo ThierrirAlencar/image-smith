@@ -6,10 +6,12 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { FileService } from '../file/file.service';
 import { SupabaseService } from './supabase.service';
+import { UserService } from '../user/user.service';
 
 @Module({
-  providers: [ImageService,PrismaService,AuthService,JwtService,FileService,SupabaseService],
-  controllers: [ImageController]
+  providers: [ImageService,PrismaService,AuthService,JwtService,FileService,SupabaseService,UserService],
+  controllers: [ImageController],
+  exports:[SupabaseService]
 })
 
 export class ImageModule {}

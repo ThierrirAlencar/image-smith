@@ -18,6 +18,8 @@ import {
 import { AuthRequest } from 'src/interfaces/authRequest';
 import { ImageService } from '../image/image.service';
 import { FileService } from '../file/file.service';
+import { SupabaseService } from '../image/supabase.service';
+import { UserService } from '../user/user.service';
 
 enum EffectType {
   None = 0,
@@ -61,7 +63,13 @@ const EffectMap: Record<string, EffectType> = {
 
 @Controller('processes')
 export class ProcessController {
-constructor(private processService: ProcessService,private ImageService:ImageService,private fileHandler:FileService) {}
+constructor(
+  private processService: ProcessService,
+  private ImageService:ImageService,
+  private fileHandler:FileService,
+  private supabaseService:SupabaseService,
+  private userService:UserService
+) {}
     @Post()
     async create(@Req() req: AuthRequest, @Body() body: any) {
       const schema = z.object({
@@ -76,24 +84,41 @@ constructor(private processService: ProcessService,private ImageService:ImageSer
         ]).default(""),
         amount:z.object({
           amountR:z.number({message:"Intensidade do efeito aplicado para a cor vermelha (também é usado como intensidade quando as outras cores não são nescessárias)"}),
-          amountG:z.number({message:"Intensidade do efeito aplicado para a cor verde"}).default(0),
-          amountB:z.number({message:"Intensidade do efeito aplicado para a cor azul"}).default(0)
+          amountG:z.number({message:"Intensidade do efeito aplicado para a cor verde"}),
+          amountB:z.number({message:"Intensidade do efeito aplicado para a cor azul"})
         })
       });
   
-      const {image_id,output_filename,type} = schema.parse(body);
+      const {image_id,output_filename,type,amount} = schema.parse(body);
   
       try {
-        const {stored_filepath,original_filename} = await this.ImageService.findOne(image_id)
+        
+        //Find the Image Who we Want to Change
+        const {stored_filepath,original_filename,user_id} = await this.ImageService.findOne(image_id)
+        //Load User name
+        const {name} = await this.userService.userProfile(user_id)
+        //Turn the Effect enum to a number
         const effectNumber: EffectType = EffectMap[type];
-        const fileFolderResponse = await this.processService.handleProcessEffect(stored_filepath,effectNumber)
+        //handle the process (calls python)
+        const fileFolderResponse = await this.processService.handleProcessEffect(stored_filepath,effectNumber,amount)
+        
+        // //Upload to Supabase
+        //LoadImage Local Buffer (from python saved directory)
+        const localFileResponse = await this.fileHandler.loadImage(fileFolderResponse)
 
-        const created = await this.processService.create({image_id,output_filename:fileFolderResponse,operation:type,});
+        //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
+        const publicPathUrl = await this.supabaseService.uploadToSupabase({
+          buffer:localFileResponse,
+          mimetype:"png",originalname:original_filename
+        }, `${name}/${type}` )
+
+        //Create the process as entity registering the sucess of the process operation 
+        const created = await this.processService.create({image_id,output_filename:publicPathUrl.public_url,operation:type,});
 
         //carregar imagem para retornar como base64
         const bufferResult = await this.fileHandler.loadImage(fileFolderResponse)
           // Transforma buffers em base64 e monta data URL
-        const base64 = bufferResult.toString('base64');
+        const base64 = bufferResult.toString('base64'); 
 
         return {
           statusCode: 201,

@@ -3,7 +3,7 @@ import { OpenAPIObject } from "@nestjs/swagger";
 export const swaggerOptions:OpenAPIObject = {
     info:{
         title:"Image Forge",
-        version:"2.0.0",
+        version:"2.5.0",
         description:"Uma API completa para operações com Imagens",
         contact:{email:"cibatechcorp@gmail.com"},
         license:{
@@ -956,7 +956,7 @@ export const swaggerOptions:OpenAPIObject = {
               description: 'Dados do processo de imagem criado',
             },
             image: {
-              type: 'string',
+              type: 'Buffer',
               format: 'byte',
               description: 'Imagem processada codificada em base64',
             },
