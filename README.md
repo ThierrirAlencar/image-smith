@@ -1,5 +1,20 @@
-<p align="center" text-align="center"><img src="https://github.com/user-attachments/assets/d6e13713-ae46-409f-b178-55163df23c02"/></p>
-<p align="center" text-align="center">A image manipulation API with built-in effects, transformation and conversion for images.</p>
+<p align="center" text-align="center"><img src="https://github.com/user-attachments/assets/1c239555-822d-45ea-9b1f-87e5885c6b55"/></p>
+<p align="center" text-align="center">A image manipulation API with built-in effects, transformation and <br> conversion for images.</p> <br>
+
+
+
+
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/cf7d97b0-33da-40c7-aad0-80aa932ddc2c" width="100"> 
+  <img src="https://github.com/user-attachments/assets/b38fc8b8-829c-458f-b248-3a7ccd24e2a7" width="100"> 
+  <img src="https://cdn-icons-png.flaticon.com/256/5968/5968381.png" width="100">    
+  <img src="https://github.com/user-attachments/assets/b38fc8b8-829c-458f-b248-3a7ccd24e2a7" width="100"> 
+  <img src="https://cdn.iconscout.com/icon/free/png-256/free-python-logo-icon-download-in-svg-png-gif-file-formats--technology-social-media-vol-5-pack-logos-icons-2945099.png?f=webp&w=256" width="100">
+</p>
+
+
 
 # Features 💫
 
