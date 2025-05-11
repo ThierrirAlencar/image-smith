@@ -4,9 +4,11 @@ import { ProcessController } from './process.controller';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
 import { ImageService } from '../image/image.service';
 import { FileService } from '../file/file.service';
+import { SupabaseService } from '../image/supabase.service';
+import { UserService } from '../user/user.service';
 
 @Module({
-  providers: [ProcessService,PrismaService,ImageService,FileService],
+  providers: [ProcessService,PrismaService,ImageService,FileService,SupabaseService,UserService],
   controllers: [ProcessController]
 })
 export class ProcessModule {}

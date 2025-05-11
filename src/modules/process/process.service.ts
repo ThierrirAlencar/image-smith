@@ -6,6 +6,12 @@ import { PrismaService } from 'src/shared/prisma/PrismaService';
 import { promises as fs } from 'fs';
 import { promisify } from 'util';
 import { exec } from 'child_process';
+
+interface amountLike{
+    amountR?:number,
+    amountG?:number,
+    amountB?:number
+}
 @Injectable()
 export class ProcessService {
     protected basePath = join(__dirname, "../../../")
@@ -126,16 +132,32 @@ export class ProcessService {
 
     }
 
-    async handleProcessEffect(imagePathRelative: string, effectIndex: number): Promise<string> {
-        const filePath = join(this.basePath, imagePathRelative);
+    async handleProcessEffect(imagePathRelative: string, effectIndex: number,amount:amountLike): Promise<string> {
+        //transforms the file Path (unescessary in a supabase online Context)
+        //const filePath = join(this.basePath, imagePathRelative);
+
+        //Turns exec into an async promise
         const execAsync = promisify(exec)
-        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py')} ${filePath} ${effectIndex} 5 5 5`;
+        
+        //Separates the RGB values from amount
+        const {amountB:B,amountG:G,amountR:R} = amount
+
+
+        //The command to be executed
+        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py')} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
+        
         console.log(`running: ${command}`);
       
+        //Tries to run the command
+
         try {
-          const { stdout } = await execAsync(command);
-          console.log('Python stdout:', stdout);
-          return stdout.trim(); // retorna apenas o texto da saída
+            //Executes the Python script and checks if it's output
+            const { stdout } = await execAsync(command);
+
+            console.log('Python stdout:', stdout);
+
+
+            return stdout.trim(); // retorna apenas o texto da saída
         } catch (error) {
           console.error('Erro ao executar script Python:', error);
           throw new Error('Erro ao processar efeito na imagem.');

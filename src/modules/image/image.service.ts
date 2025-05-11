@@ -38,7 +38,7 @@ export class ImageService {
                 Id:id
             },
             select:{
-                user_id:false,
+                user_id:true,
                 Id:true,created_at:true,original_filename:true,process_filepath:true,size:true,stored_filepath:true,updated_at:true
             }
         })
