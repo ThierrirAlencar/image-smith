@@ -3,8 +3,12 @@ import sys
 import uuid
 import cv2 as cv
 import numpy as np
+import requests
+from PIL import Image
+from io import BytesIO
 
 parameters = sys.argv[1:]
+
 effectsNameList = [
     "",
     "Grayscale","Blur","Canny","Pixelate",
@@ -12,6 +16,7 @@ effectsNameList = [
     "RGB_Boost","Negative","Brightness","Skin_Whitening",
     "Heat","Sepia","Cartoon","Pencil_Sketh"
 ]
+
 input_path = parameters[0] # URl de entrada
 effect = int(parameters[1])  # Efeito a ser aplicado
 Amount = int(parameters[2])  # Intensidade a ser aplicada
@@ -20,12 +25,17 @@ AmountB = int(parameters[3]) # Em B se preciso
 file_name = effectsNameList[effect]+"-"+str(uuid.uuid4())
 output_path = "./uploads/finished/effect/"+effectsNameList[effect] # URL de saída
 
+# Faz download da imagem da URL pública do Supabase
+response = requests.get(input_path)
+response.raise_for_status()  # Garante que a resposta é válida
+
+# Abre a imagem diretamente da memória
+img = Image.open(BytesIO(response.content)).convert("RGBA")
 
 if not os.path.exists(output_path):
     os.makedirs(output_path)
     
-img = cv.imread(input_path)
-
+img = cv.cvtColor(np.array(img), cv.COLOR_RGBA2BGRA)
 
 def pixelate(img,h=16,w=16):
     # Get input size
@@ -39,7 +49,6 @@ def pixelate(img,h=16,w=16):
 
     # Initialize output image
     return cv.resize(temp, (width, height), interpolation=cv.INTER_NEAREST)
-
 def rgb_boost(img, amount):
     # Garante que a imagem está no formato BGR
     img = img.astype('int32')  # Para evitar overflow
@@ -47,7 +56,6 @@ def rgb_boost(img, amount):
     img[..., 1] = cv.min(img[..., 1] + amount[1], 255)  # G
     img[..., 0] = cv.min(img[..., 0] + amount[2], 255)  # B
     return img.astype('uint8')
-
 def change_brigthness(img, amount):
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
     h, s, v = cv.split(hsv)
@@ -55,7 +63,6 @@ def change_brigthness(img, amount):
     v = cv.min(v, 255)
     final_hsv = cv.merge((h, s, v))
     return cv.cvtColor(final_hsv, cv.COLOR_HSV2BGR)
-
 def skin_whitening(img, amount):
     # Converter para YCrCb para identificar tons de pele
     ycrcb = cv.cvtColor(img, cv.COLOR_BGR2YCrCb)
@@ -81,7 +88,6 @@ def heatmap_filter(img):
     # Aplicar o colormap 'HOT'
     heatmap = cv.applyColorMap(gray, cv.COLORMAP_HOT)
     return heatmap
-
 def sepia_filter(img):
     # Converter a imagem para float64 para evitar estouro de valores
     img_sepia = img.astype(np.float64)
@@ -95,7 +101,6 @@ def sepia_filter(img):
     img_sepia = np.clip(img_sepia, 0, 255)
     # Converter de volta para uint8
     return img_sepia.astype(np.uint8)
-
 def cartoon_filter(img):
     # Converter para escala de cinza
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -169,12 +174,12 @@ else:
         case 15:
             img = cartoon_filter(img) # Amount desnecessário
             pass;
-        case 15:
+        case 16:
             img = pencil_sketch_filter(img) # Amount desnecessário
             pass;
-        
-            
-    absolute_path = (os.path.abspath(output_path)+"/"+file_name+".png").strip()
-    cv.imwrite(absolute_path,img)
-    print(absolute_path)
-    pass
+    
+    absolute_path = (os.path.abspath(output_path)+"/"+file_name+".png").strip();
+    cv.imwrite(absolute_path,img);
+    print(absolute_path);
+    
+    pass;

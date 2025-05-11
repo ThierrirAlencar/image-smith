@@ -23,11 +23,12 @@ import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { log } from 'console';
 import { join } from 'path';
-import { diskStorage } from 'multer';
+import { diskStorage, memoryStorage } from 'multer';
+import { SupabaseService } from './supabase.service';
   
 @Controller('images')
 export class ImageController {
-    constructor(private imageService: ImageService, private authService:AuthService) {}
+    constructor(private imageService: ImageService, private authService:AuthService,private supabaseService:SupabaseService) {}
   
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor("file",{
@@ -38,13 +39,7 @@ export class ImageController {
         }
         cb(null, true);
       },
-      storage:diskStorage({
-                          destination: './uploads/uploaded', // Diretório onde as imagens serão salvas
-                          filename: (req, file, cb) => {
-                              const uniqueSuffix = `${Date.now()}`;
-                              cb(null, `${uniqueSuffix}.png`); // Salvando como PNG
-                          },
-                      }),
+      storage:memoryStorage(),
       limits:{
         fileSize:5*1000000,//5mb
       }
@@ -56,13 +51,12 @@ export class ImageController {
         .parse(req.user);
   
       const {
-            destination:stored_filepath,
-            filename:original_filename
-        } = file
+            original_filename,public_url:stored_filepath
+            } = await this.supabaseService.uploadToSupabase(file,userId)
   
       try {
         const result = await this.imageService.create({
-            original_filename,stored_filepath:stored_filepath+"/"+original_filename,user_favorite:false,user_id:userId
+            original_filename,stored_filepath,user_favorite:false,user_id:userId
         });
   
         return {
