@@ -3,8 +3,12 @@ import sys
 import uuid
 import cv2 as cv
 import numpy as np
+import requests
+from PIL import Image
+from io import BytesIO
 
 parameters = sys.argv[1:]
+
 effectsNameList = [
     "",
     "Grayscale","Blur","Canny","Pixelate",
@@ -12,6 +16,7 @@ effectsNameList = [
     "RGB_Boost","Negative","Brightness","Skin_Whitening",
     "Heat","Sepia","Cartoon","Pencil_Sketh"
 ]
+
 input_path = parameters[0] # URl de entrada
 effect = int(parameters[1])  # Efeito a ser aplicado
 Amount = int(parameters[2])  # Intensidade a ser aplicada
@@ -20,11 +25,17 @@ AmountB = int(parameters[3]) # Em B se preciso
 file_name = effectsNameList[effect]+"-"+str(uuid.uuid4())
 output_path = "./uploads/finished/effect/"+effectsNameList[effect] # URL de saída
 
+# Faz download da imagem da URL pública do Supabase
+response = requests.get(input_path)
+response.raise_for_status()  # Garante que a resposta é válida
+
+# Abre a imagem diretamente da memória
+img = Image.open(BytesIO(response.content)).convert("RGBA")
 
 if not os.path.exists(output_path):
     os.makedirs(output_path)
     
-img = cv.imread(input_path)
+img = cv.cvtColor(np.array(img), cv.COLOR_RGBA2BGRA)
 
 def pixelate(img,h=16,w=16):
     # Get input size
