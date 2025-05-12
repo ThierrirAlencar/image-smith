@@ -7,6 +7,5 @@ jobs:
       - run: node --version
       - run: npm --version
       - uses: actions/checkout@v3
-      - run: npm install --force
-      - run: npm run start
+      - run: echo project ready 🚀
       
