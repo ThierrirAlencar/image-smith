@@ -196,73 +196,77 @@ export const swaggerOptions:OpenAPIObject = {
         },
       },
       '/images': {
-      post: {
-        tags: ['Images'],
-        summary: 'Upload de imagem',
-        description: 'Envia uma imagem associada ao usuário autenticado.',
-        security: [{ bearerAuth: [] }],
-        requestBody: {
-          required: true,
-          content: {
-            'multipart/form-data': {
-              schema: {
-                type: 'object',
-                properties: {
-                  file: {
-                    type: 'string',
-                    format: 'binary',
-                    description: 'Arquivo da imagem para upload',
-                  },
-                },
-                required: ['file'],
-              },
-            },
-          },
-        },
-        responses: {
-          201: {
-            description: 'Imagem enviada com sucesso',
+        post: {
+          tags: ['Images'],
+          summary: 'Upload de imagem',
+          description: 'Envia uma imagem associada ao usuário autenticado.',
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
             content: {
-              'application/json': {
+              'multipart/form-data': {
                 schema: {
                   type: 'object',
                   properties: {
-                    statusCode: { type: 'number', example: 201 },
-                    description: { type: 'string', example: 'Imagem enviada com sucesso' },
-                    image: { $ref: '#/components/schemas/Image' },
+                    file: {
+                      type: 'string',
+                      format: 'binary',
+                      description: 'Arquivo da imagem para upload',
+                    },
                   },
+                  required: ['file'],
                 },
               },
             },
           },
-          500: {
-            description: 'Erro ao salvar imagem',
-          },
-        },
-      },
-      get: {
-        tags: ['Images'],
-        summary: 'Listar imagens do usuário',
-        description: 'Retorna todas as imagens associadas ao usuário autenticado.',
-        security: [{ bearerAuth: [] }],
-        responses: {
-          200: {
-            description: 'Lista de imagens retornada com sucesso',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    statusCode: { type: 'number', example: 200 },
-                    description: { type: 'string', example: 'Lista de imagens retornada com sucesso' },
-                    images: {
-                      type: 'array',
-                      items: { $ref: '#/components/schemas/Image' },
+          responses: {
+            201: {
+              description: 'Imagem enviada com sucesso',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      statusCode: { type: 'number', example: 201 },
+                      description: { type: 'string', example: 'Imagem enviada com sucesso' },
+                      image: { $ref: '#/components/schemas/Image' },
                     },
                   },
                 },
               },
             },
+            500: {
+              description: 'Erro ao salvar imagem',
+            },
+          },
+        },
+        get: {
+          tags: ['Images'],
+          summary: 'Listar imagens do usuário',
+          description: 'Retorna todas as imagens associadas ao usuário autenticado.',
+          security: [{ bearerAuth: [] }],
+          responses: {
+            200: {
+              description: 'Lista de imagens retornada com sucesso',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      statusCode: { type: 'number', example: 200 },
+                      description: { type: 'string', example: 'Lista de imagens retornada com sucesso' },
+                      images: {
+                        type: 'array',
+                        items: { $ref: '#/components/schemas/Image' },
+                      },
+                      simplified:{
+                        type:'array',
+                        items:{$ref:"#/components/schemas/simplified_image"}
+                      }
+                    },
+                  },
+                },
+              },
           },
           404: {
             description: 'Usuário não encontrado',
@@ -852,6 +856,32 @@ export const swaggerOptions:OpenAPIObject = {
             created_at: { type: 'string', format: 'date-time', example: '2025-04-16T12:00:00Z' },
             updated_at: { type: 'string', format: 'date-time', example: '2025-04-16T12:00:00Z' },
           },
+        },
+        simplified_image:{
+          type:"object",
+          properties:{
+            public_url: {
+              type:"string",
+              description:"The public url of the image, global use for both uploaded and processed"
+            },
+            date: {
+              type:"DateTime"
+            },
+            favorite: {
+              type:"boolean",
+              example:false
+            },
+            id:{
+              type:"string",
+              description:"The id"
+            },
+            type: {
+              type:'enum',
+              enum:["uploaded","processed"],
+              example:"uploaded",
+              description:"1 means processed and 0 means uploaded, processed images are the ones that you processed while uploaded are refered as images "
+            }
+          }
         },
         CreateImageProcessDto: {
           type: 'object',

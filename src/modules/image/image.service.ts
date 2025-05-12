@@ -4,12 +4,26 @@ import { join } from 'path';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
 import { promises as fs } from 'fs';
+import { EnumLike } from 'zod';
 
 interface imageUpdateParams{
     imageId:string,
     name:string,
     user_favorite:boolean
 }
+enum type{ 
+    uploaded,
+    processed
+}
+interface image{
+    public_url:string,
+    type:type,
+    id:string,
+    date:Date,
+    favorite:boolean
+}
+
+
 @Injectable()
 export class ImageService {
     protected basePath = join(__dirname, "../../../")
@@ -49,31 +63,72 @@ export class ImageService {
         return doesTheImageExists
     }
 
-    async findManyByUserId(userId:string):Promise<Partial<Image>[]>{
+    async findManyByUserId(userId: string): Promise<{
+        entity_list: Partial<Image>[],
+        images: image[]
+        }> {
         const doesTheUserExists = await this.prismaService.user.findUnique({
-            where:{
-                id:userId
+            where: {
+            id: userId
             },
-            select:{
-                id:false,email:true,name:true
+            select: {
+            email: true,
+            name: true
             }
-        })
-        if(!doesTheUserExists){
-            throw new EntityNotFoundError("User",userId)
-        }
-        
-        const manyList = await this.prismaService.image.findMany({
-            where:{
-                user_id:userId
-            },
-            select:{
-                user_id:false,
-                Id:true,created_at:true,original_filename:true,process_filepath:true,size:true,stored_filepath:true,updated_at:true
-            }
-        })
+        });
 
-        return manyList
+        if (!doesTheUserExists) {
+            throw new EntityNotFoundError("User", userId);
+        }
+
+        const entity_list = await this.prismaService.image.findMany({
+            where: {
+                user_id: userId
+            },
+            select: {
+                Id: true,
+                original_filename: true,
+                stored_filepath: true,
+                process_filepath: true,
+                size: true,
+                created_at: true,
+                updated_at: true,
+                user_favorite: true
+            }
+        });
+
+        const images: image[] = [];
+
+        for (const e of entity_list) {
+            const loadList = await this.prismaService.image_processing.findMany({
+                where: {
+                    image_id: e.Id
+                }
+            });
+
+            const processLoadList: image[] = loadList.map(ee => ({
+                public_url: ee.output_filename,
+                date: ee.created_at,
+                favorite: false,
+                id: ee.id,
+                type: type.processed
+            }));
+
+            images.push({
+                date: e.created_at,
+                favorite: e.user_favorite,
+                id: e.Id,
+                public_url: e.stored_filepath,
+                type: type.uploaded
+            }, ...processLoadList);
+        }
+
+        return {
+            entity_list,
+            images
+        };
     }
+
 
     async delete(id:string):Promise<Partial<Image>>{
         const doesTheImageExists = await this.prismaService.image.findUnique({

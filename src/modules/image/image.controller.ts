@@ -109,7 +109,6 @@ export class ImageController {
     async listByUser(@Req() req: AuthRequest, @Res() res:Response) {
       const userId = req.user.id;
 
-      log(userId)
       
       try {
         
@@ -118,7 +117,8 @@ export class ImageController {
         res.status(200).send({
           statusCode: 200,
           description: 'Lista de imagens retornada com sucesso',
-          images,
+          images:images.entity_list,
+          simplified:images.images
         });
       } catch (err) {
         if (err instanceof EntityNotFoundError) {
