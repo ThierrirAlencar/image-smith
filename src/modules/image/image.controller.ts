@@ -19,7 +19,7 @@ import {
 import { AuthRequest } from 'src/interfaces/authRequest';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { log } from 'console';
 import { join } from 'path';
@@ -241,11 +241,11 @@ export class ImageController {
     }
   
     @UseGuards(AuthGuard('jwt'))
-    @Delete('')
-    async delete(@Req() req: AuthRequest) {
+    @Delete(':id')
+    async delete(@Req() req: Request) {
       const { id } = z
         .object({ id: z.string().uuid() })
-        .parse(req.user);
+        .parse(req.params);
   
       try {
         const deleted = await this.imageService.delete(id);

@@ -305,32 +305,6 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
-      delete: {
-        tags: ['Images'],
-        summary: 'Deletar imagem do usuário',
-        description: 'Remove a imagem associada ao ID do usuário autenticado.',
-        security: [{ bearerAuth: [] }],
-        responses: {
-          200: {
-            description: 'Imagem deletada com sucesso',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    statusCode: { type: 'number', example: 200 },
-                    description: { type: 'string', example: 'Imagem deletada com sucesso' },
-                    image: { $ref: '#/components/schemas/Image' },
-                  },
-                },
-              },
-            },
-          },
-          404: {
-            description: 'Imagem não encontrada',
-          },
-        },
-      },
       },
       '/images/{id}': {
         get: {
@@ -367,6 +341,32 @@ export const swaggerOptions:OpenAPIObject = {
             },
           },
         },
+        delete: {
+        tags: ['Images'],
+        summary: 'Deletar imagem do usuário',
+        description: 'Remove a imagem associada ao ID do usuário autenticado.',
+        security: [{ bearerAuth: [] }],
+        responses: {
+          200: {
+            description: 'Imagem deletada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    statusCode: { type: 'number', example: 200 },
+                    description: { type: 'string', example: 'Imagem deletada com sucesso' },
+                    image: { $ref: '#/components/schemas/Image' },
+                  },
+                },
+              },
+            },
+          },
+          404: {
+            description: 'Imagem não encontrada',
+          },
+        },
+      },
       },
       '/processes': {
         post: {

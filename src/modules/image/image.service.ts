@@ -88,7 +88,12 @@ export class ImageService {
         if(!doesTheImageExists){
             throw new EntityNotFoundError("image",id)
         }
-
+        //Deleta a lista de alterações relativa a imagem
+        await this.prismaService.image_processing.deleteMany({
+            where:{
+                image_id:id
+            }
+        })
         const deleteFinal = await this.prismaService.image.delete({
             where:{
                 Id:id
