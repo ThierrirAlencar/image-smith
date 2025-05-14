@@ -41,4 +41,4 @@ pip install -r public/requirements.txt
 
 # Executando build do NestJS
 echo "⚙️  Compilando projeto NestJS..."
-npm run start
+npm install --force
