@@ -8,7 +8,7 @@ import { FileService } from '../file/file.service';
 import { SupabaseService } from '../image/supabase.service';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 
-@Controller('defined')
+@Controller('processes/defined')
 export class DefinedController {
     constructor(
         private ProcessService: ProcessService,
@@ -272,11 +272,14 @@ export class DefinedController {
     @Post("rgb_Boost")
     async rgb_boost(@Req() req:Request,@Res() res:Response){
         const schema = z.object({
-                image_id: z.string().uuid()
+                image_id: z.string().uuid(),
+                Amount:z.object({
+                    amountB:z.number(),amountG:z.number(),amountR:z.number()
+                })
         }).parse(req.body);
 
-        const {image_id} = schema
-
+        const {image_id,Amount} = schema
+        const {amountB,amountG,amountR} = Amount
         try{
             //Find the Image Who we Want to Change
             const {stored_filepath,original_filename,user_id} = await this.ImageService.findOne(image_id)
@@ -284,7 +287,7 @@ export class DefinedController {
             const {name} = await this.UserService.userProfile(user_id)
 
             //handle the process (calls python)
-        const fileFolderResponse = await this.ProcessService.handleProcessEffect(stored_filepath,9,{amountB:0,amountG:0,amountR:0})
+        const fileFolderResponse = await this.ProcessService.handleProcessEffect(stored_filepath,9,{amountB,amountG,amountR})
 
                // //Upload to Supabase
         //LoadImage Local Buffer (from python saved directory)
@@ -489,6 +492,66 @@ export class DefinedController {
         return {
           statusCode: 201,
           description: 'Processamento do tipo Heat criado com sucesso',
+          process: created,
+          image:base64
+        };
+        }catch(err){
+            if (err instanceof EntityNotFoundError) {
+                throw new HttpException(
+                {
+                    description: 'Imagem não encontrada',
+                    error: err.message,
+                },
+                HttpStatus.NOT_FOUND,
+                );
+                }
+              
+                throw new HttpException(
+                {
+                    description: 'Erro desconhecido',
+                    error: err.message,
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+    @Post("bg_remove")
+    async bgremove(@Req() req:Request,@Res() res:Response){
+        const schema = z.object({
+                image_id: z.string().uuid()
+        }).parse(req.body);
+
+        const {image_id} = schema
+
+        try{
+            //Find the Image Who we Want to Change
+            const {stored_filepath,original_filename,user_id} = await this.ImageService.findOne(image_id)
+            //Load User name
+            const {name} = await this.UserService.userProfile(user_id)
+
+            //handle the process (calls python)
+            const fileFolderResponse = await this.ProcessService.handleRemoveBg(stored_filepath)
+
+            //Upload to Supabase
+            //LoadImage Local Buffer (from python saved directory)
+            const localFileResponse = await this.fileHandler.loadImage(fileFolderResponse)
+
+            //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
+            const publicPathUrl = await this.supabaseService.uploadToSupabase({
+            buffer:localFileResponse,
+            mimetype:"png",originalname:original_filename
+            }, `${name}/RemoveBackground` )
+
+            //Create the process as entity registering the sucess of the process operation 
+            const created = await this.ProcessService.create({image_id,output_filename:publicPathUrl.public_url,operation:"RemoveBackground",});
+            //carregar imagem para retornar como base64
+            const bufferResult = await this.fileHandler.loadImage(fileFolderResponse)
+            // Transforma buffers em base64 e monta data URL
+            const base64 = bufferResult.toString('base64'); 
+
+        return {
+          statusCode: 201,
+          description: 'Processamento do tipo RemoveBackground criado com sucesso',
           process: created,
           image:base64
         };

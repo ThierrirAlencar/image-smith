@@ -162,7 +162,35 @@ export class ProcessService {
           console.error('Erro ao executar script Python:', error);
           throw new Error('Erro ao processar efeito na imagem.');
         }
-      }
+    }
+
+    async handleRemoveBg(imagePathRelative: string){
+        //transforms the file Path (unescessary in a supabase online Context)
+        //const filePath = join(this.basePath, imagePathRelative);
+
+        //Turns exec into an async promise
+        const execAsync = promisify(exec)
+        
+        //The command to be executed
+        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py')} ${imagePathRelative}`;
+        
+        console.log(`running: ${command}`);
+      
+        //Tries to run the command
+
+        try {
+            //Executes the Python script and checks if it's output
+            const { stdout } = await execAsync(command);
+
+            console.log('Python stdout:', stdout);
+
+
+            return stdout.trim(); // retorna apenas o texto da saída
+        } catch (error) {
+          console.error('Erro ao executar script Python:', error);
+          throw new Error('Erro ao processar efeito na imagem.');
+        }
+    }
 
 }
 
