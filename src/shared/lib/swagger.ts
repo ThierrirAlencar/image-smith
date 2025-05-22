@@ -1224,7 +1224,153 @@ export const swaggerOptions:OpenAPIObject = {
         }
       }
     }
-      }
+      },
+      'processes/defined/reescale': {
+        post: {
+          summary: 'Reescala a imagem',
+          description: 'Aplica uma transformação de escala uniforme à imagem.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    scale: { type: 'number' },
+                  },
+                  required: ['image_id', 'scale'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: 'Imagem reescalada com sucesso',
+            },
+            404: {
+              description: 'Imagem não encontrada',
+            },
+            500: {
+              description: 'Erro interno do servidor',
+            },
+          },
+        },
+      },
+      'processes/defined/translate': {
+        post: {
+          summary: 'Translada a imagem',
+          description: 'Aplica translação (deslocamento) horizontal e vertical à imagem.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    x: { type: 'number' },
+                    y: { type: 'number' },
+                  },
+                  required: ['image_id', 'x', 'y'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Imagem transladada com sucesso' },
+            404: { description: 'Imagem não encontrada' },
+            500: { description: 'Erro interno do servidor' },
+          },
+        },
+      },
+      'processes/defined/rotate': {
+        post: {
+          summary: 'Rotaciona a imagem',
+          description: 'Rotaciona a imagem em um ângulo especificado em graus.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    angle: { type: 'number' },
+                  },
+                  required: ['image_id', 'angle'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Imagem rotacionada com sucesso' },
+            404: { description: 'Imagem não encontrada' },
+            500: { description: 'Erro interno do servidor' },
+          },
+        },
+      },
+      'processes/defined/cardinal_scale': {
+        post: {
+          summary: 'Aplica escala cardinal à imagem',
+          description: 'Aplica escalonamento independente nos eixos X e Y.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    sx: { type: 'number' },
+                    sy: { type: 'number' },
+                  },
+                  required: ['image_id', 'sx', 'sy'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Escala cardinal aplicada com sucesso' },
+            404: { description: 'Imagem não encontrada' },
+            500: { description: 'Erro interno do servidor' },
+          },
+        },
+      },
+      'processes/defined/crop': {
+        post: {
+          summary: 'Recorta a imagem',
+          description: 'Recorta uma região da imagem com base nas coordenadas e tamanho.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    x: { type: 'number' },
+                    y: { type: 'number' },
+                    w: { type: 'number' },
+                    h: { type: 'number' },
+                  },
+                  required: ['image_id', 'x', 'y', 'w', 'h'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Imagem recortada com sucesso' },
+            404: { description: 'Imagem não encontrada' },
+            500: { description: 'Erro interno do servidor' },
+          },
+        },
+      },
     },
     components: {
       securitySchemes: {

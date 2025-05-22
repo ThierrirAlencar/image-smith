@@ -575,4 +575,320 @@ export class DefinedController {
             );
         }
     }
+
+    //Reescale
+    @Post("reescale")
+    async reescale(@Req() req:Request,@Res() res:Response){
+        const schema = z.object({
+                image_id: z.string().uuid(),
+                scale:z.number()
+        }).parse(req.body);
+
+        const {image_id,scale} = schema
+
+        try{
+            //Find the Image Who we Want to Change
+            const {stored_filepath,original_filename,user_id} = await this.ImageService.findOne(image_id)
+            //Load User name
+            const {name} = await this.UserService.userProfile(user_id)
+
+            //handle the process (calls python)
+            const fileFolderResponse = await this.ProcessService.handleTransformation(stored_filepath,1,{p1:scale,p2:0,p3:0,p4:0})
+
+            //Upload to Supabase
+            //LoadImage Local Buffer (from python saved directory)
+            const localFileResponse = await this.fileHandler.loadImage(fileFolderResponse)
+
+            //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
+            const publicPathUrl = await this.supabaseService.uploadToSupabase({
+            buffer:localFileResponse,
+            mimetype:"png",originalname:original_filename
+            }, `${name}/Reescale` )
+
+            //Create the process as entity registering the sucess of the process operation 
+            const created = await this.ProcessService.create({image_id,output_filename:publicPathUrl.public_url,operation:"Reescale",});
+            //carregar imagem para retornar como base64
+            const bufferResult = await this.fileHandler.loadImage(fileFolderResponse)
+            // Transforma buffers em base64 e monta data URL
+            const base64 = bufferResult.toString('base64'); 
+
+        return {
+          statusCode: 201,
+          description: 'Processamento do tipo Reescale criado com sucesso',
+          process: created,
+          image:base64
+        };
+        }catch(err){
+            if (err instanceof EntityNotFoundError) {
+                throw new HttpException(
+                {
+                    description: 'Imagem não encontrada',
+                    error: err.message,
+                },
+                HttpStatus.NOT_FOUND,
+                );
+                }
+              
+                throw new HttpException(
+                {
+                    description: 'Erro desconhecido',
+                    error: err.message,
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    //translate
+    @Post("translate")
+    async translate(@Req() req:Request,@Res() res:Response){
+        const schema = z.object({
+                image_id: z.string().uuid(),
+                x:z.number(),y:z.number()
+        }).parse(req.body);
+
+        const {image_id,x,y} = schema
+
+        try{
+            //Find the Image Who we Want to Change
+            const {stored_filepath,original_filename,user_id} = await this.ImageService.findOne(image_id)
+            //Load User name
+            const {name} = await this.UserService.userProfile(user_id)
+
+            //handle the process (calls python)
+            const fileFolderResponse = await this.ProcessService.handleTransformation(stored_filepath,2,{p1:x,p2:y,p3:0,p4:0})
+
+            //Upload to Supabase
+            //LoadImage Local Buffer (from python saved directory)
+            const localFileResponse = await this.fileHandler.loadImage(fileFolderResponse)
+
+            //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
+            const publicPathUrl = await this.supabaseService.uploadToSupabase({
+            buffer:localFileResponse,
+            mimetype:"png",originalname:original_filename
+            }, `${name}/Translate` )
+
+            //Create the process as entity registering the sucess of the process operation 
+            const created = await this.ProcessService.create({image_id,output_filename:publicPathUrl.public_url,operation:"Translate",});
+            //carregar imagem para retornar como base64
+            const bufferResult = await this.fileHandler.loadImage(fileFolderResponse)
+            // Transforma buffers em base64 e monta data URL
+            const base64 = bufferResult.toString('base64'); 
+
+        return {
+          statusCode: 201,
+          description: 'Processamento do tipo Translate criado com sucesso',
+          process: created,
+          image:base64
+        };
+        }catch(err){
+            if (err instanceof EntityNotFoundError) {
+                throw new HttpException(
+                {
+                    description: 'Imagem não encontrada',
+                    error: err.message,
+                },
+                HttpStatus.NOT_FOUND,
+                );
+                }
+              
+                throw new HttpException(
+                {
+                    description: 'Erro desconhecido',
+                    error: err.message,
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    //rotate
+    @Post("rotate")
+    async rotate(@Req() req:Request,@Res() res:Response){
+        const schema = z.object({
+                image_id: z.string().uuid(),
+                angle:z.number()
+        }).parse(req.body);
+
+        const {image_id,angle} = schema
+
+        try{
+            //Find the Image Who we Want to Change
+            const {stored_filepath,original_filename,user_id} = await this.ImageService.findOne(image_id)
+            //Load User name
+            const {name} = await this.UserService.userProfile(user_id)
+
+            //handle the process (calls python)
+            const fileFolderResponse = await this.ProcessService.handleTransformation(stored_filepath,3,{p1:angle,p2:0,p3:0,p4:0})
+
+            //Upload to Supabase
+            //LoadImage Local Buffer (from python saved directory)
+            const localFileResponse = await this.fileHandler.loadImage(fileFolderResponse)
+
+            //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
+            const publicPathUrl = await this.supabaseService.uploadToSupabase({
+            buffer:localFileResponse,
+            mimetype:"png",originalname:original_filename
+            }, `${name}/Rotate` )
+
+            //Create the process as entity registering the sucess of the process operation 
+            const created = await this.ProcessService.create({image_id,output_filename:publicPathUrl.public_url,operation:"Rotate",});
+            //carregar imagem para retornar como base64
+            const bufferResult = await this.fileHandler.loadImage(fileFolderResponse)
+            // Transforma buffers em base64 e monta data URL
+            const base64 = bufferResult.toString('base64'); 
+
+        return {
+          statusCode: 201,
+          description: 'Processamento do tipo Rotate criado com sucesso',
+          process: created,
+          image:base64
+        };
+        }catch(err){
+            if (err instanceof EntityNotFoundError) {
+                throw new HttpException(
+                {
+                    description: 'Imagem não encontrada',
+                    error: err.message,
+                },
+                HttpStatus.NOT_FOUND,
+                );
+                }
+              
+                throw new HttpException(
+                {
+                    description: 'Erro desconhecido',
+                    error: err.message,
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    //cardinal_scale
+    @Post("cardinal_scale")
+    async cardinal_scale(@Req() req:Request,@Res() res:Response){
+        const schema = z.object({
+                image_id: z.string().uuid(),
+                sx:z.number(),sy:z.number()
+        }).parse(req.body);
+
+        const {image_id,sx,sy} = schema
+
+        try{
+            //Find the Image Who we Want to Change
+            const {stored_filepath,original_filename,user_id} = await this.ImageService.findOne(image_id)
+            //Load User name
+            const {name} = await this.UserService.userProfile(user_id)
+
+            //handle the process (calls python)
+            const fileFolderResponse = await this.ProcessService.handleTransformation(stored_filepath,4,{p1:sx,p2:sy,p3:0,p4:0})
+
+            //Upload to Supabase
+            //LoadImage Local Buffer (from python saved directory)
+            const localFileResponse = await this.fileHandler.loadImage(fileFolderResponse)
+
+            //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
+            const publicPathUrl = await this.supabaseService.uploadToSupabase({
+            buffer:localFileResponse,
+            mimetype:"png",originalname:original_filename
+            }, `${name}/CardinalScale` )
+
+            //Create the process as entity registering the sucess of the process operation 
+            const created = await this.ProcessService.create({image_id,output_filename:publicPathUrl.public_url,operation:"CardinalScale",});
+            //carregar imagem para retornar como base64
+            const bufferResult = await this.fileHandler.loadImage(fileFolderResponse)
+            // Transforma buffers em base64 e monta data URL
+            const base64 = bufferResult.toString('base64'); 
+
+        return {
+          statusCode: 201,
+          description: 'Processamento do tipo CardinalScale criado com sucesso',
+          process: created,
+          image:base64
+        };
+        }catch(err){
+            if (err instanceof EntityNotFoundError) {
+                throw new HttpException(
+                {
+                    description: 'Imagem não encontrada',
+                    error: err.message,
+                },
+                HttpStatus.NOT_FOUND,
+                );
+                }
+              
+                throw new HttpException(
+                {
+                    description: 'Erro desconhecido',
+                    error: err.message,
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    //crop
+    @Post("crop")
+    async crop(@Req() req:Request,@Res() res:Response){
+        const schema = z.object({
+                image_id: z.string().uuid(),
+                x:z.number(),y:z.number(),
+                w:z.number(),h:z.number()
+        }).parse(req.body);
+
+        const {image_id,x,y,h,w} = schema
+
+        try{
+            //Find the Image Who we Want to Change
+            const {stored_filepath,original_filename,user_id} = await this.ImageService.findOne(image_id)
+            //Load User name
+            const {name} = await this.UserService.userProfile(user_id)
+
+            //handle the process (calls python)
+            const fileFolderResponse = await this.ProcessService.handleTransformation(stored_filepath,5,{p1:x,p2:y,p3:w,p4:h})
+
+            //Upload to Supabase
+            //LoadImage Local Buffer (from python saved directory)
+            const localFileResponse = await this.fileHandler.loadImage(fileFolderResponse)
+
+            //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
+            const publicPathUrl = await this.supabaseService.uploadToSupabase({
+            buffer:localFileResponse,
+            mimetype:"png",originalname:original_filename
+            }, `${name}/Crop` )
+
+            //Create the process as entity registering the sucess of the process operation 
+            const created = await this.ProcessService.create({image_id,output_filename:publicPathUrl.public_url,operation:"Crop",});
+            //carregar imagem para retornar como base64
+            const bufferResult = await this.fileHandler.loadImage(fileFolderResponse)
+            // Transforma buffers em base64 e monta data URL
+            const base64 = bufferResult.toString('base64'); 
+
+        return {
+          statusCode: 201,
+          description: 'Processamento do tipo Crop criado com sucesso',
+          process: created,
+          image:base64
+        };
+        }catch(err){
+            if (err instanceof EntityNotFoundError) {
+                throw new HttpException(
+                {
+                    description: 'Imagem não encontrada',
+                    error: err.message,
+                },
+                HttpStatus.NOT_FOUND,
+                );
+                }
+              
+                throw new HttpException(
+                {
+                    description: 'Erro desconhecido',
+                    error: err.message,
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
 }

@@ -12,6 +12,13 @@ interface amountLike{
     amountG?:number,
     amountB?:number
 }
+
+interface transformLike{
+    p1:number,
+    p2:number,
+    p3:number,
+    p4:number
+}
 @Injectable()
 export class ProcessService {
     protected basePath = join(__dirname, "../../../")
@@ -144,8 +151,8 @@ export class ProcessService {
 
 
         //The command to be executed
-        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py')} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
-        
+        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py')} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`
+      
         console.log(`running: ${command}`);
       
         //Tries to run the command
@@ -163,7 +170,37 @@ export class ProcessService {
           throw new Error('Erro ao processar efeito na imagem.');
         }
     }
+    async handleTransformation(imagePathRelative: string, transformIndex: number,amount:transformLike): Promise<string> {
+        //transforms the file Path (unescessary in a supabase online Context)
+        //const filePath = join(this.basePath, imagePathRelative);
 
+        //Turns exec into an async promise
+        const execAsync = promisify(exec)
+        
+        //Separates the RGB values from amount
+        const {p1:A,p2:B,p3:C,p4:D} = amount
+
+
+        //The command to be executed
+        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
+      
+        console.log(`running: ${command}`);
+      
+        //Tries to run the command
+
+        try {
+            //Executes the Python script and checks if it's output
+            const { stdout } = await execAsync(command);
+
+            console.log('Python stdout:', stdout);
+
+
+            return stdout.trim(); // retorna apenas o texto da saída
+        } catch (error) {
+          console.error('Erro ao executar script Python:', error);
+          throw new Error('Erro ao processar transformação na imagem.');
+        }
+    }
     async handleRemoveBg(imagePathRelative: string){
         //transforms the file Path (unescessary in a supabase online Context)
         //const filePath = join(this.basePath, imagePathRelative);
