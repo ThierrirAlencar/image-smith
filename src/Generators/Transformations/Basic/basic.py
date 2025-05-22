@@ -1,40 +1,27 @@
-from io import BytesIO
 import uuid
 from rembg import remove
 from PIL import Image
 import sys 
 import os
-from PIL import Image
-import requests
 
 
 ##recebe os parametros a partir do script, ignora o parametro 0 pois este é o nome do arquivo
 parameters = sys.argv[1:]
 
 inputPath = parameters[0] # URl de entrada
-outputPath = parameters[1] # URL de saída
-
-# Faz download da imagem da URL pública do Supabase
-response = requests.get(inputPath)
-response.raise_for_status()  # Garante que a resposta é válida
+outputPath = "./img/" # URL de saída
 
 file_name = str(uuid.uuid4())
-
-# Abre a imagem diretamente da memória
-img = Image.open(BytesIO(response.content)).convert("RGBA")
-
 
 if not os.path.exists(outputPath):
     os.makedirs(outputPath)
     
-
-
-
+input = Image.open(inputPath)
 output = remove(input)
 output.save(os.path.join(outputPath, file_name+".png"))
 
-absolute_path = (os.path.abspath(outputPath)+"\ "+file_name+".png").strip()
-print(absolute_path.strip())
+
+print(parameters[0])
 
 
 #input = Image.open(parameters[0])

@@ -833,7 +833,544 @@ export const swaggerOptions:OpenAPIObject = {
           }
         }
       }
+      },
+      "processes/defined/grayscale": {
+      "post": {
+        "tags": ["Processamento de Imagem"],
+        "summary": "Aplica efeito Grayscale",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": ["image_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Processamento do tipo Grayscale criado com sucesso"
+          },
+          "404": {
+            "description": "Imagem não encontrada"
+          },
+          "500": {
+            "description": "Erro desconhecido"
+          }
+        }
+      }
+      },
+      "processes/defined/blur": {
+      "post": {
+        "tags": ["Processamento de Imagem"],
+        "summary": "Aplica efeito Blur",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "Amount": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 7
+                  }
+                },
+                "required": ["image_id", "Amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Processamento do tipo Blur criado com sucesso"
+          },
+          "404": {
+            "description": "Imagem não encontrada"
+          },
+          "500": {
+            "description": "Erro desconhecido"
+          }
+        }
+      }
+      },
+      "processes/defined/canny": {
+      "post": {
+        "tags": ["Processamento de Imagem"],
+        "summary": "Aplica efeito Canny",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "Amount": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 7
+                  }
+                },
+                "required": ["image_id", "Amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Processamento do tipo Canny criado com sucesso"
+          },
+          "404": {
+            "description": "Imagem não encontrada"
+          },
+          "500": {
+            "description": "Erro desconhecido"
+          }
+        }
+      }
+      },
+      "processes/defined/pixelate": {
+      "post": {
+        "tags": ["Processamento de Imagem"],
+        "summary": "Aplica efeito Pixelate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": ["image_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Processamento do tipo Pixelate criado com sucesso"
+          },
+          "404": {
+            "description": "Imagem não encontrada"
+          },
+          "500": {
+            "description": "Erro desconhecido"
+          }
+        }
+      }
+      },
+      "processes/defined/rgb_Boost": {
+      "post": {
+        "tags": ["Processamento de Imagem"],
+        "summary": "Aplica efeito RGB Boost",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "Amount": {
+                  "type": "object",
+                  "description": "Valores para ajuste dos canais RGB",
+                  "properties": {
+                    "amountB": {
+                      "type": "number",
+                      "description": "Valor de incremento para o canal Blue"
+                    },
+                    "amountG": {
+                      "type": "number",
+                      "description": "Valor de incremento para o canal Green"
+                    },
+                    "amountR": {
+                      "type": "number",
+                      "description": "Valor de incremento para o canal Red"
+                    }
+                  },
+                  "required": ["amountB", "amountG", "amountR"]
+                  }
+                },
+                "required": ["image_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Processamento do tipo RGB Boost criado com sucesso"
+          },
+          "404": {
+            "description": "Imagem não encontrada"
+          },
+          "500": {
+            "description": "Erro desconhecido"
+          }
+        }
+      }
+      },
+      "processes/defined/negative": {
+      "post": {
+      "summary": "Aplica o efeito negativo na imagem",
+      "description": "Processa a imagem com o efeito Negative, faz upload do resultado para o Supabase e retorna a imagem em base64.",
+      "tags": ["Processamento de Imagem"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": ["image_id"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Processamento do tipo Negative criado com sucesso",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusCode": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "process": { "$ref": "#/components/schemas/Process" },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Imagem não encontrada"
+        },
+        "500": {
+          "description": "Erro desconhecido"
+        }
+      }
     }
+      },
+      "processes/defined/skin_Whitening": {
+      "post": {
+      "summary": "Aplica o efeito de clareamento da pele",
+      "description": "Processa a imagem com o efeito Skin_Whitening, faz upload do resultado para o Supabase e retorna a imagem em base64.",
+      "tags": ["Processamento de Imagem"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": ["image_id"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Processamento do tipo Skin_Whitening criado com sucesso",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusCode": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "process": { "$ref": "#/components/schemas/Process" },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Imagem não encontrada"
+        },
+        "500": {
+          "description": "Erro desconhecido"
+        }
+      }
+    }
+      },
+      "processes/defined/heat": {
+      "post": {
+      "summary": "Aplica o efeito de aquecimento na imagem",
+      "description": "Processa a imagem com o efeito Heat, faz upload do resultado para o Supabase e retorna a imagem em base64.",
+      "tags": ["Processamento de Imagem"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": ["image_id"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Processamento do tipo Heat criado com sucesso",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusCode": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "process": { "$ref": "#/components/schemas/Process" },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Imagem não encontrada"
+        },
+        "500": {
+          "description": "Erro desconhecido"
+        }
+      }
+    }
+      },
+      "processes/defined/bg_remove": {
+    "post": {
+      "summary": "Remove o fundo da imagem",
+      "description": "Processa a imagem removendo seu fundo, faz upload do resultado para o Supabase e retorna a imagem em base64.",
+      "tags": ["Processamento de Imagem"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": ["image_id"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Processamento do tipo RemoveBackground criado com sucesso",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusCode": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "process": { "$ref": "#/components/schemas/Process" },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Imagem não encontrada"
+        },
+        "500": {
+          "description": "Erro desconhecido"
+        }
+      }
+    }
+      },
+      'processes/defined/reescale': {
+        post: {
+          summary: 'Reescala a imagem',
+          description: 'Aplica uma transformação de escala uniforme à imagem.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    scale: { type: 'number' },
+                  },
+                  required: ['image_id', 'scale'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: {
+              description: 'Imagem reescalada com sucesso',
+            },
+            404: {
+              description: 'Imagem não encontrada',
+            },
+            500: {
+              description: 'Erro interno do servidor',
+            },
+          },
+        },
+      },
+      'processes/defined/translate': {
+        post: {
+          summary: 'Translada a imagem',
+          description: 'Aplica translação (deslocamento) horizontal e vertical à imagem.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    x: { type: 'number' },
+                    y: { type: 'number' },
+                  },
+                  required: ['image_id', 'x', 'y'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Imagem transladada com sucesso' },
+            404: { description: 'Imagem não encontrada' },
+            500: { description: 'Erro interno do servidor' },
+          },
+        },
+      },
+      'processes/defined/rotate': {
+        post: {
+          summary: 'Rotaciona a imagem',
+          description: 'Rotaciona a imagem em um ângulo especificado em graus.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    angle: { type: 'number' },
+                  },
+                  required: ['image_id', 'angle'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Imagem rotacionada com sucesso' },
+            404: { description: 'Imagem não encontrada' },
+            500: { description: 'Erro interno do servidor' },
+          },
+        },
+      },
+      'processes/defined/cardinal_scale': {
+        post: {
+          summary: 'Aplica escala cardinal à imagem',
+          description: 'Aplica escalonamento independente nos eixos X e Y.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    sx: { type: 'number' },
+                    sy: { type: 'number' },
+                  },
+                  required: ['image_id', 'sx', 'sy'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Escala cardinal aplicada com sucesso' },
+            404: { description: 'Imagem não encontrada' },
+            500: { description: 'Erro interno do servidor' },
+          },
+        },
+      },
+      'processes/defined/crop': {
+        post: {
+          summary: 'Recorta a imagem',
+          description: 'Recorta uma região da imagem com base nas coordenadas e tamanho.',
+          "tags": ["Processamento de Imagem"],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    image_id: { type: 'string', format: 'uuid' },
+                    x: { type: 'number' },
+                    y: { type: 'number' },
+                    w: { type: 'number' },
+                    h: { type: 'number' },
+                  },
+                  required: ['image_id', 'x', 'y', 'w', 'h'],
+                },
+              },
+            },
+          },
+          responses: {
+            201: { description: 'Imagem recortada com sucesso' },
+            404: { description: 'Imagem não encontrada' },
+            500: { description: 'Erro interno do servidor' },
+          },
+        },
+      },
     },
     components: {
       securitySchemes: {
