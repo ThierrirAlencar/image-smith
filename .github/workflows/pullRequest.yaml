@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Cache node_modules
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with: 
           path: node_modules
           key: ${{ runner.os }}-${{hashFiles('**/yarn.lock')}} # Nao entendi
@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Restore Node Modules
-        uses: actions/cache@v2 # restora o que foi feito no serviço anterior usando a mesma chave
+        uses: actions/cache@v3 # restora o que foi feito no serviço anterior usando a mesma chave
         with: 
           path: node_modules
           key: ${{ runner.os }}-${{hashFiles('**/yarn.lock')}} # Nao entendi
