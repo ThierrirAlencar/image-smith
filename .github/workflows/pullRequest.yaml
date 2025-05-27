@@ -1,0 +1,26 @@
+name: TestOnPullRequest
+
+on: [pull_request] # define que irá rodar apenas no PR
+
+jobs:
+  setup:
+    name: Setup The enviroment # nome do processo
+    runs-on: ubuntu-latest # aonde está rodando
+    steps: # passo passo da action
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with: 
+          path: node_modules
+          key: ${{ runner.os }}-${{hashFiles('**/yarn.lock')}} # Nao entendi
+
+      - name: Install Dependencies
+        run: npm run build # faz o build do projeto
+    
+  find_dead_code:
+      name: Find dead Code 
+      runs-on: ubuntu-latest
+      steps:
+        
