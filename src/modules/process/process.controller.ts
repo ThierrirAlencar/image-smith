@@ -206,7 +206,7 @@ constructor(
         );
       }
     }
-  
+    
     @Get(':id')
     async getById(@Param('id') id: string) {
       try {
