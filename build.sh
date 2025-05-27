@@ -39,6 +39,4 @@ source venv/bin/activate
 echo "📦 Instalando dependências do Python..."
 pip install -r public/requirements.txt
 
-# Executando build do NestJS
-echo "⚙️  Compilando projeto NestJS..."
-npm install --force
+

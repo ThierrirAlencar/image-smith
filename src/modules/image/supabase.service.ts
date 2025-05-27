@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Multer } from "multer";
 import { FileHandlingError } from "src/shared/errors/FileHandlingError";
-import { bufferToStream } from "src/shared/functions/BufferToReadableStream";
 import { supabase } from "src/shared/lib/supabase.client";
 import { ImageService } from "./image.service";
 import { PrismaService } from "src/shared/prisma/PrismaService";
