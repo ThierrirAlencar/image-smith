@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Image, Prisma } from '@prisma/client';
 import { join } from 'path';
-import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
-import { PrismaService } from 'src/shared/prisma/PrismaService';
-import { promises as fs } from 'fs';
-import { EnumLike } from 'zod';
+import { PrismaService } from '../../shared/prisma/PrismaService';
+import { EntityNotFoundError } from '../../shared/errors/EntityDoesNotExistsError';
 
 interface imageUpdateParams{
     imageId:string,
@@ -22,7 +20,6 @@ interface image{
     date:Date,
     favorite:boolean
 }
-
 
 @Injectable()
 export class ImageService {
@@ -66,7 +63,8 @@ export class ImageService {
     async findManyByUserId(userId: string): Promise<{
         entity_list: Partial<Image>[],
         images: image[]
-        }> {
+        }> 
+    {
         const doesTheUserExists = await this.prismaService.user.findUnique({
             where: {
             id: userId

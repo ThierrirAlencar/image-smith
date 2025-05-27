@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Image, image_processing, Prisma } from '@prisma/client';
 import { join } from 'path';
-import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
-import { PrismaService } from 'src/shared/prisma/PrismaService';
+import { EntityNotFoundError } from '../..//shared/errors/EntityDoesNotExistsError';
+import { PrismaService } from '../../shared/prisma/PrismaService';
 import { promises as fs } from 'fs';
 import { promisify } from 'util';
 import { exec } from 'child_process';
