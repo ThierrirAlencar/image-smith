@@ -20,7 +20,17 @@ jobs:
         run: npm run build # faz o build do projeto
     
   find_dead_code:
-      name: Find dead Code 
+      name: Find unuesed code exports (dead code)
       runs-on: ubuntu-latest
       steps:
-        
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Restore Node Modules
+        uses: actions/cache@v2 # restora o que foi feito no serviço anterior usando a mesma chave
+        with: 
+          path: node_modules
+          key: ${{ runner.os }}-${{hashFiles('**/yarn.lock')}} # Nao entendi
+
+      - name: Run ts-prune
+        run: npx ts-prune --error #verifica a existência de dead code
