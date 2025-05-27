@@ -85,7 +85,7 @@ export class mailService{
                         <p>Atenciosamente,<br/>Equipe ImageForge</p>
                         </div>
                         <div class="footer">
-                        Este é um e-mail automático. Não responda diretamente a esta mensagem.
+                            Este é um e-mail automático. Não responda diretamente a esta mensagem.
                         </div>
                     </div>
                     </body>

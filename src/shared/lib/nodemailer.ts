@@ -4,7 +4,7 @@ import { EmailType } from "src/interfaces/emailType";
 
 
 //configuração de conexao com o nodemailer
-export const config = {
+const config = {
     host: "smtp.gmail.com", // Padrão para Gmail, mas pode ser alterado
     port:587, // Conversão para número e padrão 587 (STARTTLS)
     auth: {

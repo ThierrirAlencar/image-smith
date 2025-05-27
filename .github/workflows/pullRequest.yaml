@@ -1,0 +1,39 @@
+name: TestOnPullRequest
+
+on: [pull_request] # define que irá rodar apenas no PR
+
+jobs:
+  setup:
+    name: Setup The enviroment # nome do processo
+    runs-on: ubuntu-latest # aonde está rodando
+    steps: # passo passo da action
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with: 
+          path: node_modules
+          key: ${{ runner.os }}-${{hashFiles('**/yarn.lock')}} # Nao entendi
+
+      - name: Install Dependencies
+        run: npm run build # faz o build do projeto
+    
+  find_dead_code:
+      name: Find unuesed code exports (dead code)
+      runs-on: ubuntu-latest
+      needs: setup # define que esse job só será executado depois do setup 
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Restore Node Modules
+        uses: actions/cache@v3 # restora o que foi feito no serviço anterior usando a mesma chave
+        with: 
+          path: node_modules
+          key: ${{ runner.os }}-${{hashFiles('**/yarn.lock')}} # Nao entendi
+
+      - name: Secure ts-prune Install
+        run: npm i ts-prune --force
+      - name: Run ts-prune
+        run: npx ts-prune --error #verifica a existência de dead code
