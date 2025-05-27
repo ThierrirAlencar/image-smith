@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, PrismaClient, role, User } from '@prisma/client';
+import { Prisma, role, User } from '@prisma/client';
 import { compare, hash } from 'bcryptjs';
 import { EntityNotFoundError } from '../../shared/errors/EntityDoesNotExistsError';
 import { InvalidPasswordError } from '../../shared/errors/InvalidPasswordErorr';
@@ -9,7 +9,7 @@ import { PrismaService } from '../../shared/prisma/PrismaService';
 
 
 
-interface userInService{
+export interface userInService{
     email:string,
     name:string,
     role:role
