@@ -22,6 +22,7 @@ jobs:
   find_dead_code:
       name: Find unuesed code exports (dead code)
       runs-on: ubuntu-latest
+      needs: setup # define que esse job só será executado depois do setup 
       steps:
       - name: Checkout
         uses: actions/checkout@v3
