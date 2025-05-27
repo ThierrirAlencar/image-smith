@@ -9,7 +9,7 @@ import { PrismaService } from '../../shared/prisma/PrismaService';
 
 
 
-export interface userInService{
+interface userInService{
     email:string,
     name:string,
     role:role
