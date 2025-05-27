@@ -1,4 +1,4 @@
-on: push
+on: push ## Acontece toda vez que fazemos um push
 jobs:
   build-node: 
     runs-on: ubuntu-latest

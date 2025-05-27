@@ -33,5 +33,7 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-${{hashFiles('**/yarn.lock')}} # Nao entendi
 
+      - name: Secure ts-prune Install
+        run: npm i ts-prune --force
       - name: Run ts-prune
         run: npx ts-prune --error #verifica a existência de dead code
