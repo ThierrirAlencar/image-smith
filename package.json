@@ -14,7 +14,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:dev": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
@@ -60,6 +60,7 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
+    "ts-prune": "^0.10.3",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },
