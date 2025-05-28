@@ -12,7 +12,8 @@ export class AuthService {
     const payload = { sub:id };
     // console.log(payload)
     return this.jwtservice.sign(payload,{
-      secret:process.env.JWT_SECRET
+      secret:process.env.JWT_SECRET,
+      expiresIn:"7d"
     });
   }
 

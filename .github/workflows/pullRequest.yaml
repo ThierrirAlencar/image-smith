@@ -36,4 +36,4 @@ jobs:
       - name: Secure ts-prune Install
         run: npm i ts-prune --force
       - name: Run ts-prune
-        run: npx ts-prune --error #verifica a existência de dead code
+        run: npx ts-prune --error #verifica a existência de dead code (a flag --error retorna status code 1 se houver dead code)
