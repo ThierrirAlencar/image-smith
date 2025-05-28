@@ -1417,6 +1417,11 @@ export const swaggerOptions:OpenAPIObject = {
               enum:["uploaded","processed"],
               example:"uploaded",
               description:"1 means processed and 0 means uploaded, processed images are the ones that you processed while uploaded are refered as images "
+            },
+            filename:{
+              type:"string",
+              example:"arquivo.png",
+              description:"O nome padrão do arquivo ou do processo"
             }
           }
         },

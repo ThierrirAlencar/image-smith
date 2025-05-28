@@ -18,7 +18,8 @@ interface image{
     type:type,
     id:string,
     date:Date,
-    favorite:boolean
+    favorite:boolean,
+    filename:string
 }
 
 @Injectable()
@@ -109,7 +110,8 @@ export class ImageService {
                 date: ee.created_at,
                 favorite: false,
                 id: ee.id,
-                type: type.processed
+                type: type.processed,
+                filename:ee.operation
             }));
 
             images.push({
@@ -117,7 +119,8 @@ export class ImageService {
                 favorite: e.user_favorite,
                 id: e.Id,
                 public_url: e.stored_filepath,
-                type: type.uploaded
+                type: type.uploaded,
+                filename:e.original_filename
             }, ...processLoadList);
         }
 
