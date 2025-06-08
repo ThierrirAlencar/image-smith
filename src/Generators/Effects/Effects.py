@@ -101,6 +101,12 @@ def sepia_filter(img):
     img_sepia = np.clip(img_sepia, 0, 255)
     # Converter de volta para uint8
     return img_sepia.astype(np.uint8)
+def sepia(img):
+    sepia_filter = np.array([[0.272, 0.534, 0.131, 0],
+                             [0.349, 0.686, 0.168, 0],
+                             [0.393, 0.769, 0.189, 0],
+                             [0, 0, 0, 1]])
+    return cv.transform(img, sepia_filter)
 def cartoon_filter(img):
     # Converter para escala de cinza
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
