@@ -64,24 +64,26 @@ export class DefinedController {
         },
         `${name}/Grayscale`,
       );
-
+      console.log("Chega aqui")
       //Create the process as entity registering the sucess of the process operation
       const created = await this.ProcessService.create({
         image_id,
         output_filename: publicPathUrl.public_url,
         operation: "Grayscale",
       });
+      console.log("Chega aqui p2")
       //carregar imagem para retornar como base64
       const bufferResult = await this.fileHandler.loadImage(fileFolderResponse);
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
+      console.log("Chega aqui p3");
 
-      return {
+      res.status(201).send( {
         statusCode: 201,
         description: "Processamento do tipo Grayscale criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -159,12 +161,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo blur criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -242,12 +244,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send( {
         statusCode: 201,
         description: "Processamento do tipo Canny criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -319,12 +321,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo Pixelate criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -401,12 +403,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo RGBBoost criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -478,12 +480,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo Negative criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -555,12 +557,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo Skin_Whitening criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -632,12 +634,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo Heat criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -705,13 +707,13 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description:
           "Processamento do tipo RemoveBackground criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -865,12 +867,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo Translate criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -944,12 +946,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo Rotate criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -1024,12 +1026,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo CardinalScale criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
@@ -1106,12 +1108,12 @@ export class DefinedController {
       // Transforma buffers em base64 e monta data URL
       const base64 = bufferResult.toString("base64");
 
-      return {
+      res.status(201).send(  {
         statusCode: 201,
         description: "Processamento do tipo Crop criado com sucesso",
         process: created,
         image: base64,
-      };
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundError) {
         throw new HttpException(
