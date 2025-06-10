@@ -42,3 +42,6 @@ pip install -r public/requirements.txt
 
 # Instalando as dependencias NPM na máquina
 npm install --force 
+
+echo "✅ Adicionando venv ao PATH..."
+export PATH="$(pwd)/venv/bin:$PATH"
