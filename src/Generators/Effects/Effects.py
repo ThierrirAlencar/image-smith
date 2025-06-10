@@ -143,6 +143,7 @@ else:
             img = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
             pass;
         case 2: 
+            Amount = Amount if Amount % 2 == 1 else Amount + 1;
             img = cv.GaussianBlur(img,(Amount,Amount),cv.BORDER_DEFAULT) # Intensidade Máxima 7
             pass
         case 3:
