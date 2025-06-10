@@ -30,18 +30,30 @@ else
     echo "✅ pip já está instalado."
 fi
 
-# Criar e ativar ambiente virtual
+# Criar ambiente virtual Python
 echo "🐍 Criando ambiente virtual Python..."
 python3 -m venv venv
+
+# Ativar virtualenv
+echo "📦 Ativando ambiente virtual..."
 source venv/bin/activate
 
-# Instalando dependências Python no venv
+# Garantir que pip está atualizado dentro do venv
+pip install --upgrade pip
+
+# Instalar dependências Python dentro do venv
 echo "📦 Instalando dependências do Python..."
 pip install -r public/requirements.txt
 
+# Salva caminho absoluto do Python do venv
+VENV_PYTHON="$(pwd)/venv/bin/python"
+echo "✅ Caminho do Python do venv: $VENV_PYTHON"
 
-# Instalando as dependencias NPM na máquina
-npm install --force 
+# Exporta variável para uso posterior (ex: chamada via Node)
+echo "export VENV_PYTHON=$VENV_PYTHON" >> .venv_env_vars
 
-echo "✅ Adicionando venv ao PATH..."
-export PATH="$(pwd)/venv/bin:$PATH"
+# Instalar dependências do Node.js
+echo "📦 Instalando dependências do Node.js..."
+npm install --force
+
+echo "✅ Build finalizado com sucesso."
