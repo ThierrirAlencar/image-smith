@@ -55,5 +55,8 @@ echo "export VENV_PYTHON=$VENV_PYTHON" >> .venv_env_vars
 # Instalar dependências do Node.js
 echo "📦 Instalando dependências do Node.js..."
 npm install --force
+echo "forçando a instalação do OpenCV Headerless"
+
+pip install opencv-python-headless --force-reinstall --no-cache-dir
 
 echo "✅ Build finalizado com sucesso."
