@@ -42,5 +42,8 @@ pip install -r public/requirements.txt
 echo "📦 Lista de dependencias instaladas com sucesso"
 pip list 
 
+echo "📦 Lista de dependencias instaladas com sucesso dentro da venv"
+venv/bin/pip list 
+
 echo "instalando dependencias NPM"
 npm install --force
