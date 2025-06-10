@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: imageforge
+    env: node
+    buildCommand: |
+      echo "🏗️ Iniciando processo de build..."
+      chmod +x build.sh
+      ./build.sh
+    startCommand: |
+      source venv/bin/activate && node src/index.js
+    plan: free
+    branch: main
+    autoDeploy: true
