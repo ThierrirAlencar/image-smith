@@ -39,4 +39,6 @@ source venv/bin/activate
 echo "📦 Instalando dependências do Python..."
 pip install -r public/requirements.txt
 
+# Instalando as dependencias NPM na máquina
 
+npm install --force 
