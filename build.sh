@@ -30,33 +30,14 @@ else
     echo "✅ pip já está instalado."
 fi
 
-# Criar ambiente virtual Python
+# Criar e ativar ambiente virtual
 echo "🐍 Criando ambiente virtual Python..."
 python3 -m venv venv
-
-# Ativar virtualenv
-echo "📦 Ativando ambiente virtual..."
 source venv/bin/activate
 
-# Garantir que pip está atualizado dentro do venv
-pip install --upgrade pip
-
-# Instalar dependências Python dentro do venv
+# Instalando dependências Python no venv
 echo "📦 Instalando dependências do Python..."
 pip install -r public/requirements.txt
 
-# Salva caminho absoluto do Python do venv
-VENV_PYTHON="$(pwd)/venv/bin/python"
-echo "✅ Caminho do Python do venv: $VENV_PYTHON"
-
-# Exporta variável para uso posterior (ex: chamada via Node)
-echo "export VENV_PYTHON=$VENV_PYTHON" >> .venv_env_vars
-
-# Instalar dependências do Node.js
-echo "📦 Instalando dependências do Node.js..."
+echo "instalando dependencias NPM"
 npm install --force
-echo "forçando a instalação do OpenCV Headerless"
-
-pip install opencv-python-headless --force-reinstall --no-cache-dir
-
-echo "✅ Build finalizado com sucesso."
