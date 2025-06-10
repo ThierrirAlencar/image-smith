@@ -6,8 +6,12 @@ services:
       echo "🏗️ Iniciando processo de build..."
       chmod +x build.sh
       ./build.sh
-    startCommand: |
-      source venv/bin/activate && node src/index.js
+    startCommand: node src/index.js
     plan: free
     branch: main
     autoDeploy: true
+    envVars:
+      - key: VIRTUAL_ENV
+        value: /opt/render/project/src/venv
+      - key: PATH
+        value: /opt/render/project/src/venv/bin:$PATH
