@@ -10,6 +10,7 @@ import {
     HttpException,
     HttpStatus,
     UseGuards,
+    Res,
   } from '@nestjs/common';
   import { z } from 'zod';
   import { ProcessService } from './process.service';
@@ -20,6 +21,8 @@ import { ImageService } from '../image/image.service';
 import { FileService } from '../file/file.service';
 import { SupabaseService } from '../image/supabase.service';
 import { UserService } from '../user/user.service';
+import { log } from 'console';
+import { Response } from 'express';
 
 enum EffectType {
   None = 0,
@@ -150,14 +153,14 @@ constructor(
     @Put(':id')
     async update(@Param('id') id: string, @Body() body: any) {
       const schema = z.object({
-        completed: z.boolean({description:"Se foi concluído ou nao",message:"Precisar se um valor booleano"}).optional(),
+        favorite: z.boolean({description:"Se a operação é favorita ou nao",message:"Precisar se um valor booleano"}).optional(),
         operation: z.string({description:"Descreva a operação realizada",message:"Faça isso em string"}).optional(),
       });
   
-      const {completed,operation} = schema.parse(body);
+      const {favorite:completed ,operation} = schema.parse(body);
   
       try {
-        const updated = await this.processService.update(id, {completed,operation});
+        const updated = await this.processService.update(id,{completed,operation});
         return {
           statusCode: 200,
           description: 'Processamento atualizado com sucesso',
@@ -315,6 +318,43 @@ constructor(
                     HttpStatus.INTERNAL_SERVER_ERROR,
             );
         }
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('favorite')
+    async listByFavorite(@Req() req: AuthRequest, @Res() res:Response) {
+          const userId = req.user.id;
+    
+          log(userId)
+          
+          try {
+            
+            const images = await this.processService.findFavorite(userId);
+      
+            res.status(200).send({
+              statusCode: 200,
+              description: 'Lista de processos favoritos retornada com sucesso',
+              images,
+            });
+          } catch (err) {
+            if (err instanceof EntityNotFoundError) {
+              throw new HttpException(
+                {
+                  description: 'Usuário não encontrado',
+                  error: err.message,
+                },
+                HttpStatus.NOT_FOUND,
+              );
+            }
+      
+            throw new HttpException(
+              {
+                description: 'Erro desconhecido',
+                error: err.message,
+              },
+              HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+          }
     }
   }
   

@@ -1371,6 +1371,89 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
+      'processes/favorite': {
+      get: {
+        tags: ['Processing'],
+        summary: 'Listar processos favoritos',
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        responses: {
+          200: {
+            description: 'Lista de processos favoritos retornada com sucesso',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    statusCode: { type: 'integer', example: 200 },
+                    description: {
+                      type: 'string',
+                      example: 'Lista de processos favoritos retornada com sucesso',
+                    },
+                    images: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string', example: 'img_1a2b3c' },
+                          userId: { type: 'string', example: 'user_123' },
+                          imageUrl: {
+                            type: 'string',
+                            format: 'uri',
+                            example: 'https://example.com/images/image1.jpg',
+                          },
+                          effect: { type: 'string', example: 'clarendon' },
+                          createdAt: {
+                            type: 'string',
+                            format: 'date-time',
+                            example: '2025-06-10T14:00:00.000Z',
+                          },
+                          isFavorite: { type: 'boolean', example: true },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          404: {
+            description: 'Usuário não encontrado',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    description: { type: 'string', example: 'Usuário não encontrado' },
+                    error: { type: 'string', example: 'No user found with ID: user_123' },
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            description: 'Erro desconhecido',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    description: { type: 'string', example: 'Erro desconhecido' },
+                    error: {
+                      type: 'string',
+                      example: "Cannot read properties of undefined (reading 'id')",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     },
     components: {
       securitySchemes: {
@@ -1454,9 +1537,9 @@ export const swaggerOptions:OpenAPIObject = {
         UpdateImageProcessDto: {
           type: 'object',
           properties: {
-            completed: {
+            favorite: {
               type: 'boolean',
-              description: 'Se foi concluído ou não',
+              description: 'Se é favorita ou não',
             },
             operation: {
               type: 'string',
