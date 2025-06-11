@@ -210,7 +210,7 @@ constructor(
       }
     }
     
-    @Get(':id')
+    @Get('/unique/:id')
     async getById(@Param('id') id: string) {
       try {
         const process = await this.processService.getById(id);
