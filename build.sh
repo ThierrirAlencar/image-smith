@@ -30,6 +30,8 @@ else
     echo "✅ pip já está instalado."
 fi
 
+
+
 # Criar e ativar ambiente virtual
 echo "🐍 Criando ambiente virtual Python..."
 python3 -m venv venv
@@ -39,6 +41,14 @@ source venv/bin/activate
 echo "📦 Instalando dependências do Python..."
 pip install -r public/requirements.txt
 
+echo "especifically fucking installs opencv"
+pip install opencv-python
 
-# Instalando as dependencias NPM na máquina
-npm install --force 
+echo "📦 Lista de dependencias instaladas com sucesso"
+pip list 
+
+echo "📦 Lista de dependencias instaladas com sucesso dentro da venv"
+venv/bin/pip list 
+
+echo "instalando dependencias NPM"
+npm install --force

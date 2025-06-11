@@ -1,4 +1,5 @@
 rembg
 Pillow 
 numpy
-opencv-python-headless
+opencv-python
+requests
