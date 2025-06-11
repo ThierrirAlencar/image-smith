@@ -151,8 +151,10 @@ export class ProcessService {
 
 
         //The command to be executed
-        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py')} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`
-      
+        const venvPython = join(this.basePath, 'venv', 'bin', 'python');
+        const scriptPath = join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py');
+        
+        const command = `${venvPython} ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
@@ -179,13 +181,11 @@ export class ProcessService {
         
         //Separates the RGB values from amount
         const {p1:A,p2:B,p3:C,p4:D} = amount
-
-
-        //The command to be executed
-        const venvPython = join(this.basePath, 'venv', 'bin', 'python');
-        const scriptPath = join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py');
         
-        const command = `${venvPython} ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
+        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
+      
+
+
 
       
         console.log(`running: ${command}`);
