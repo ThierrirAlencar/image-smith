@@ -291,7 +291,7 @@ export class DefinedController {
       //handle the process (calls python)
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
-        3,
+        4,
         { amountB: 0, amountG: 0, amountR: 0 },
       );
 
