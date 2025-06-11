@@ -229,5 +229,25 @@ export class ProcessService {
         }
     }
 
+    async findFavorite(userId:string){
+        const doesTheUserExists = await this.prisma.user.findUnique({
+            where:{
+                id:userId
+            }
+        })
+        
+        if(!doesTheUserExists){
+            throw new EntityNotFoundError("User",userId)
+        }
+
+        return await this.prisma.image_processing.findMany({
+            where:{
+                id:userId,
+                completed:true
+            }
+
+        })
+    }
+
 }
 

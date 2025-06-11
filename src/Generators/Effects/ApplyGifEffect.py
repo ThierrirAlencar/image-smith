@@ -1,5 +1,3 @@
-import os
-import sys
 import uuid
 import cv2 as cv
 from PIL import Image
