@@ -2,3 +2,4 @@ rembg
 Pillow 
 numpy
 opencv-python
+requests
