@@ -39,7 +39,7 @@ source venv/bin/activate
 
 # Instalando dependências Python no venv
 echo "📦 Instalando dependências do Python..."
-pip install -r public/requirements.txt´[
+pip install -r public/requirements.txt
 
 echo "especifically fucking installs opencv"
 pip install opencv-python
