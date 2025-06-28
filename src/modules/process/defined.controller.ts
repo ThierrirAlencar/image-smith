@@ -528,7 +528,7 @@ export class DefinedController {
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
         11,
-        { amountB: 0, amountG: 0, amountR: 0 },
+        { amountB: 200, amountG: 0, amountR: 0 },
       );
 
       //Upload to Supabase
@@ -605,7 +605,7 @@ export class DefinedController {
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
         11,
-        { amountB: 0, amountG: 0, amountR: 0 },
+        { amountB: 200, amountG: 0, amountR: 0 },
       );
 
       //Upload to Supabase
