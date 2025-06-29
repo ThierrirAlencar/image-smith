@@ -5,7 +5,7 @@ import { PrismaService } from 'src/shared/prisma/PrismaService';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { FileService } from '../file/file.service';
-import { SupabaseService } from './supabase.service';
+import { SupabaseService } from '../supabase/supabase.service';
 import { UserService } from '../user/user.service';
 
 @Module({

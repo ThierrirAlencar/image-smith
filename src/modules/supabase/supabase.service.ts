@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Multer } from "multer";
 import { FileHandlingError } from "src/shared/errors/FileHandlingError";
 import { supabase } from "src/shared/lib/supabase.client";
-import { ImageService } from "./image.service";
+import { ImageService } from "../image/image.service";
 import { PrismaService } from "src/shared/prisma/PrismaService";
 import { EntityNotFoundError } from "src/shared/errors/EntityDoesNotExistsError";
 import { createWriteStream } from "fs";
@@ -67,5 +67,26 @@ export class SupabaseService {
         await pipeline(data as any, writeStream);
         
     }
+    async deleteFromSupabase(imageId:string){
+        //Checa se a imagem existe
+        const doesTheImageExist = await this.prismaService.image.findUnique({
+            where:{
+                Id:imageId
+            }
+        })
 
+        if(!doesTheImageExist){
+            throw new EntityNotFoundError("image",imageId)
+        }
+
+        const {stored_filepath:filepath} = doesTheImageExist
+        //Deleta o arquivo do supabase
+        const { data, error } = await supabase.storage.from('main').remove([filepath]);
+        if(error) throw error;
+
+        return {
+            status:"Deleted Sucessfully",
+            data
+        }
+    }
 }

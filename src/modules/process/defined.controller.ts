@@ -12,7 +12,7 @@ import { ImageService } from "../image/image.service";
 import { UserService } from "../user/user.service";
 import { ProcessService } from "./process.service";
 import { FileService } from "../file/file.service";
-import { SupabaseService } from "../image/supabase.service";
+import { SupabaseService } from "../supabase/supabase.service";
 import { EntityNotFoundError } from "src/shared/errors/EntityDoesNotExistsError";
 
 @Controller("processes/defined")
@@ -104,8 +104,6 @@ export class DefinedController {
       );
     }
   }
-  
-  
   //Blur
   @Post("blur")
   async blur(@Req() req: Request, @Res() res: Response) {
