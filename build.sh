@@ -44,6 +44,9 @@ pip install -r public/requirements.txt
 echo "especifically fucking installs opencv"
 pip install opencv-python
 
+echo "especifically fucking installs rembg"
+pip install rembg
+
 echo "📦 Lista de dependencias instaladas com sucesso"
 pip list 
 
