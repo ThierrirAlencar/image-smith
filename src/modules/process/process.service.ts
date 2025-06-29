@@ -260,9 +260,8 @@ export class ProcessService {
                 });
             })
         );
-        
+
         return favoriteList.flat()
     }
-
 }
 

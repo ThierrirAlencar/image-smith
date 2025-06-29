@@ -108,7 +108,7 @@ export class ImageService {
             const processLoadList: image[] = loadList.map(ee => ({
                 public_url: ee.output_filename,
                 date: ee.created_at,
-                favorite: false,
+                favorite: ee.completed,
                 id: ee.id,
                 type: type.processed,
                 filename:ee.operation
