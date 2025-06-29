@@ -12,7 +12,7 @@ import requests
 TransformationsNameList = [
     "",
     "rescaleFrame","translate","rotate","cardinal_scale",
-    "flip_horizontal","crop"
+    "flip_horizontal","crop","flip_horizontal"
 ]
 
 ##recebe os parametros a partir do script, ignora o parametro 0 pois este é o nome do arquivo
@@ -77,6 +77,8 @@ if(transformIndex>0 and transformIndex<len(TransformationsNameList)):
             img = cardinal_scale(img,p1,p2) # Uses both p1 and p2
         case 5:
             img = crop(img,p1,p2,p3,p4) # Uses all params (p1,p2,p3,p4)
+        case 6: 
+            img = flip_horizontal(img) # uses none
 
 # Garante que o diretório de saída existe
 os.makedirs(output_path, exist_ok=True)
