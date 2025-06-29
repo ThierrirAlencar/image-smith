@@ -163,7 +163,7 @@ else:
             img = cv.Canny(img,Amount*10,(Amount*10)+125) # Intensidade Máxima 7
             pass
         case 4:
-            img = pixelate(img,Amount,Amount) # Intensidade define a resolução, máxima 132, miníma 16
+            img = pixelate(img,Amount,AmountG) # Intensidade define a resolução, máxima 132, miníma 16
             pass
         case 5:
             img = cv.cvtColor(img,cv.COLOR_BGR2RGB); pass;

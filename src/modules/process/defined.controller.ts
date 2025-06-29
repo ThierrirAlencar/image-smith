@@ -361,10 +361,12 @@ export class DefinedController {
     const schema = z
       .object({
         image_id: z.string().uuid(),
+        XRes:z.number({message:"X resolution of the image"}).min(16).max(128).default(32),
+        YRes:z.number({message:"Y resolution of the image"}).min(16).max(128).default(32)
       })
       .parse(req.body);
 
-    const { image_id } = schema;
+    const { image_id,XRes,YRes } = schema;
 
     try {
       //Find the Image Who we Want to Change
@@ -377,7 +379,7 @@ export class DefinedController {
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
         4,
-        { amountB: 0, amountG: 0, amountR: 0 },
+        { amountB: XRes, amountG: YRes, amountR: 0 },
       );
 
       // //Upload to Supabase
@@ -1295,7 +1297,6 @@ export class DefinedController {
       );
     }
   }
-
   //pencil_sketch_filter
   @Post("pencil_sketch_filter")
   async pencil_sketch_filter(@Req() req: Request, @Res() res: Response) {
