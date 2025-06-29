@@ -4,7 +4,7 @@ import { ProcessController } from './process.controller';
 import { PrismaService } from 'src/shared/prisma/PrismaService';
 import { ImageService } from '../image/image.service';
 import { FileService } from '../file/file.service';
-import { SupabaseService } from '../image/supabase.service';
+import { SupabaseService } from '../supabase/supabase.service';
 import { UserService } from '../user/user.service';
 import { DefinedController } from './defined.controller';
 

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Multer } from "multer";
 import { FileHandlingError } from "src/shared/errors/FileHandlingError";
 import { supabase } from "src/shared/lib/supabase.client";
-import { ImageService } from "./image.service";
+import { ImageService } from "../image/image.service";
 import { PrismaService } from "src/shared/prisma/PrismaService";
 import { EntityNotFoundError } from "src/shared/errors/EntityDoesNotExistsError";
 import { createWriteStream } from "fs";

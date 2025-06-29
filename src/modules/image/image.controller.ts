@@ -24,7 +24,7 @@ import { AuthService } from '../auth/auth.service';
 import { log } from 'console';
 import { join } from 'path';
 import { diskStorage, memoryStorage } from 'multer';
-import { SupabaseService } from './supabase.service';
+import { SupabaseService } from '../supabase/supabase.service';
 import { UserService } from '../user/user.service';
   
 @Controller('images')
