@@ -1129,6 +1129,54 @@ export const swaggerOptions:OpenAPIObject = {
       }
     }
       },
+      "processes/defined/change_brightness": {
+      "post": {
+      "summary": "Aplica o efeito de clareamento da imagem",
+      "description": "Processa a imagem com o efeito change_brightness, faz upload do resultado para o Supabase e retorna a imagem em base64.",
+      "tags": ["Processamento de Imagem"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": ["image_id"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Processamento do tipo change_brightness criado com sucesso",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusCode": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "process": { "$ref": "#/components/schemas/Process" },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Imagem não encontrada"
+        },
+        "500": {
+          "description": "Erro desconhecido"
+        }
+      }
+    }
+      },
       "processes/defined/heat": {
       "post": {
       "summary": "Aplica o efeito de aquecimento na imagem",
@@ -1371,6 +1419,176 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
+      "processes/defined/flip": {
+      "post": {
+        "summary": "Espelha horizontalmente a imagem",
+        "description": "Aplica um espelhamento horizontal à imagem (flip horizontal).",
+        "tags": ["Processamento de Imagem"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image_id": { "type": "string", "format": "uuid" }
+                },
+                "required": ["image_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Imagem espelhada com sucesso" },
+          "404": { "description": "Imagem não encontrada" },
+          "500": { "description": "Erro interno do servidor" }
+        }
+      }
+      },
+      "processes/defined/pencil_sketch_filter": {
+    "post": {
+      "summary": "Aplica o efeito lápis de esboço",
+      "description": "Processa a imagem com o efeito Pencil Sketch, faz upload do resultado para o Supabase e retorna a imagem em base64.",
+      "tags": ["Processamento de Imagem"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": ["image_id"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Processamento do tipo pencilSketch criado com sucesso",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusCode": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "process": { "$ref": "#/components/schemas/Process" },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Imagem não encontrada"
+        },
+        "500": {
+          "description": "Erro desconhecido"
+        }
+      }
+    }
+      },
+      "processes/defined/cartoon_filter": {
+      "post": {
+      "summary": "Aplica o efeito cartoon",
+      "description": "Processa a imagem com o efeito Cartoon, faz upload do resultado para o Supabase e retorna a imagem em base64.",
+      "tags": ["Processamento de Imagem"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": ["image_id"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Processamento do tipo cartoon criado com sucesso",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusCode": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "process": { "$ref": "#/components/schemas/Process" },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Imagem não encontrada"
+        },
+        "500": {
+          "description": "Erro desconhecido"
+        }
+      }
+    }
+      },
+      "processes/defined/sepia_filter": {
+    "post": {
+      "summary": "Aplica o efeito sépia",
+      "description": "Processa a imagem com o efeito Sepia, faz upload do resultado para o Supabase e retorna a imagem em base64.",
+      "tags": ["Processamento de Imagem"],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image_id": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "required": ["image_id"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Processamento do tipo Sépia criado com sucesso",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "statusCode": { "type": "integer" },
+                  "description": { "type": "string" },
+                  "process": { "$ref": "#/components/schemas/Process" },
+                  "image": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Imagem não encontrada"
+        },
+        "500": {
+          "description": "Erro desconhecido"
+        }
+      }
+    }
+      },
       'processes/favorite': {
       get: {
         tags: ['Processing'],
@@ -1453,7 +1671,7 @@ export const swaggerOptions:OpenAPIObject = {
           },
         },
       },
-    },
+      },
     },
     components: {
       securitySchemes: {

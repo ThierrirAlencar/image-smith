@@ -64,24 +64,37 @@ def change_brigthness(img, amount):
     final_hsv = cv.merge((h, s, v))
     return cv.cvtColor(final_hsv, cv.COLOR_HSV2BGR)
 def skin_whitening(img, amount):
+       # Separar canal alpha se existir
+    has_alpha = img.shape[2] == 4
+    if has_alpha:
+        bgr = img[:, :, :3]
+        alpha = img[:, :, 3]
+    else:
+        bgr = img
+
     # Converter para YCrCb para identificar tons de pele
-    ycrcb = cv.cvtColor(img, cv.COLOR_BGR2YCrCb)
-    y, cr, cb = cv.split(ycrcb)
+    ycrcb = cv.cvtColor(bgr, cv.COLOR_BGR2YCrCb)
 
-    # Criar máscara para tons de pele (valores empíricos)
-    skin_mask = cv.inRange(ycrcb, (0, 133, 77), (255, 173, 127))
+    # Máscara de pele
+    skin_mask = cv.inRange(ycrcb, (0, 135, 85), (255, 180, 135))
 
-    # Suavizar a pele usando um blur suave
-    blurred = cv.GaussianBlur(img, (amount | 1, amount | 1), 0)
-
-    # Aumentar brilho nas regiões da pele
+    # Suavizar e clarear
+    blur_strength = amount | 1
+    blurred = cv.GaussianBlur(bgr, (blur_strength, blur_strength), 0)
     brightened = change_brigthness(blurred, amount)
 
-    # Combinar a imagem original com a pele clareada
-    result = img.copy()
-    result[skin_mask > 0] = brightened[skin_mask > 0]
+    # Aplicar clareamento só na pele
+    result_bgr = bgr.copy()
+    result_bgr[skin_mask > 0] = brightened[skin_mask > 0]
+
+    # Reconstruir com alpha se necessário
+    if has_alpha:
+        result = cv.merge((result_bgr, alpha))
+    else:
+        result = result_bgr
 
     return result
+
 def heatmap_filter(img):
     # Converter para escala de cinza
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
