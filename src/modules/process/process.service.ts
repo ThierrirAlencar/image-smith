@@ -243,14 +243,25 @@ export class ProcessService {
         if(!doesTheUserExists){
             throw new EntityNotFoundError("User",userId)
         }
-
-        return await this.prisma.image_processing.findMany({
+     
+        const ImageList = await this.prisma.image.findMany({
             where:{
-                id:userId,
-                completed:true
+                user_id:userId
             }
-
         })
+
+        const favoriteList = await Promise.all(
+            ImageList.map(async (e) => {
+                return await this.prisma.image_processing.findMany({
+                where: {
+                    image_id: e.Id,
+                    completed: true,
+                },
+                });
+            })
+        );
+        
+        return favoriteList.flat()
     }
 
 }

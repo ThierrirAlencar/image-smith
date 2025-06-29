@@ -67,5 +67,26 @@ export class SupabaseService {
         await pipeline(data as any, writeStream);
         
     }
+    async deleteFromSupabase(imageId:string){
+        //Checa se a imagem existe
+        const doesTheImageExist = await this.prismaService.image.findUnique({
+            where:{
+                Id:imageId
+            }
+        })
 
+        if(!doesTheImageExist){
+            throw new EntityNotFoundError("image",imageId)
+        }
+
+        const {stored_filepath:filepath} = doesTheImageExist
+        //Deleta o arquivo do supabase
+        const { data, error } = await supabase.storage.from('main').remove([filepath]);
+        if(error) throw error;
+
+        return {
+            status:"Deleted Sucessfully",
+            data
+        }
+    }
 }
