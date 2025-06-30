@@ -1097,6 +1097,12 @@ export const swaggerOptions:OpenAPIObject = {
                 "image_id": {
                   "type": "string",
                   "format": "uuid"
+                },
+                "Amount":{
+                  "type":"number",
+                  "minimum":1,
+                  "maximum":200,
+                  "default":25
                 }
               },
               "required": ["image_id"]

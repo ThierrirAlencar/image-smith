@@ -597,6 +597,7 @@ export class DefinedController {
     const schema = z
       .object({
         image_id: z.string().uuid(),
+        Amount:z.number().max(30).min(1).default(25)
       })
       .parse(req.body);
 
@@ -613,7 +614,7 @@ export class DefinedController {
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
         12,
-        { amountB: 0, amountG: 0, amountR: 45 },
+        { amountB: 0, amountG: 0, amountR: 25 },
       );
 
       //Upload to Supabase
