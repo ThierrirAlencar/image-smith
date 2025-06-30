@@ -23,6 +23,8 @@ interface transformLike{
 export class ProcessService {
     protected basePath = join(__dirname, "../../../")
     protected notFoundFilePath = join(this.basePath,"public/Image-not-found.png")
+    protected venvPython = join(this.basePath, 'venv', 'bin', 'python');
+
     constructor(private prisma:PrismaService){}
     
     async create(data:Prisma.image_processingUncheckedCreateInput):Promise<image_processing>{
@@ -154,7 +156,7 @@ export class ProcessService {
         const venvPython = join(this.basePath, 'venv', 'bin', 'python');
         const scriptPath = join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py');
         
-        const command = `${venvPython} ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
+        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
@@ -182,7 +184,7 @@ export class ProcessService {
         //Separates the RGB values from amount
         const {p1:A,p2:B,p3:C,p4:D} = amount
         
-        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
+        const command = `${this.venvPython} ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
       
 
 
@@ -213,7 +215,8 @@ export class ProcessService {
         const execAsync = promisify(exec)
         
         //The command to be executed
-        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py')} ${imagePathRelative}`;
+        const scriptPath = join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py');
+        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative}`;
         
         console.log(`running: ${command}`);
       
