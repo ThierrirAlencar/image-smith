@@ -39,13 +39,13 @@ source venv/bin/activate
 
 # Instalando dependências Python no venv
 echo "📦 Instalando dependências do Python..."
-pip install -r public/requirements.txt
+venv/bin/pip  install -r public/requirements.txt
 
 echo "especifically fucking installs opencv"
-pip install opencv-python
+venv/bin/pip  install opencv-python
 
 echo "especifically fucking installs rembg"
-pip install rembg
+venv/bin/pip  install rembg
 
 echo "📦 Lista de dependencias instaladas com sucesso"
 pip list 

@@ -613,7 +613,7 @@ export class DefinedController {
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
         12,
-        { amountB: 25, amountG: 0, amountR: 0 },
+        { amountB: 45, amountG: 0, amountR: 0 },
       );
 
       //Upload to Supabase
@@ -745,6 +745,7 @@ export class DefinedController {
       );
     }
   }
+  //Background remover
   @Post("bg_remove")
   async bgremove(@Req() req: Request, @Res() res: Response) {
     const schema = z
@@ -819,7 +820,6 @@ export class DefinedController {
       );
     }
   }
-
   //Reescale
   @Post("reescale")
   async reescale(@Req() req: Request, @Res() res: Response) {
@@ -898,7 +898,6 @@ export class DefinedController {
       );
     }
   }
-
   //translate
   @Post("translate")
   async translate(@Req() req: Request, @Res() res: Response) {
@@ -1057,7 +1056,6 @@ export class DefinedController {
       );
     }
   }
-
   //cardinal_scale
   @Post("cardinal_scale")
   async cardinal_scale(@Req() req: Request, @Res() res: Response) {
@@ -1137,7 +1135,6 @@ export class DefinedController {
       );
     }
   }
-
   //crop
   @Post("crop")
   async crop(@Req() req: Request, @Res() res: Response) {
@@ -1395,7 +1392,7 @@ export class DefinedController {
       //handle the process (calls python)
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
-        16,
+        15,
         { amountB: 0, amountG: 0, amountR: 0 },
       );
 
