@@ -147,6 +147,20 @@ def pencil_sketch_filter(img):
     sketch = cv.divide(gray, inverted_blur, scale=256.0)
     return sketch
 
+def negative_filter(img):
+    if img.shape[2] == 4:
+        # Separar canal alpha
+        b, g, r, a = cv.split(img)
+        # Inverter apenas os canais de cor
+        b = cv.bitwise_not(b)
+        g = cv.bitwise_not(g)
+        r = cv.bitwise_not(r)
+        # Reunir com alpha original
+        return cv.merge([b, g, r, a])
+    else:
+        # Imagem sem canal alpha
+        return cv.bitwise_not(img)
+    
 if(effect>len(effectsNameList)or effect<0):
     print("Error, invalid effect");
 
@@ -177,7 +191,7 @@ else:
             img = rgb_boost(img,[Amount,AmountG,AmountB]) # Passa sustento como (r,g,b) = (Amount,AmountG,AmountB)
             pass;
         case 10:
-            img = cv.bitwise_not(img) # Nao utiliza Amount
+            img = negative_filter(img) # Nao utiliza Amount
             pass;
         case 11:
             img = change_brigthness(img,Amount) # Amount Entre -200 e 200
