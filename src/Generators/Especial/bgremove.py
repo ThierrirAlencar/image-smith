@@ -4,7 +4,6 @@ from rembg import remove
 from PIL import Image
 import sys 
 import os
-from PIL import Image
 import requests
 
 
@@ -33,7 +32,8 @@ if not os.path.exists(outputPath):
 output = remove(input)
 output.save(os.path.join(outputPath, file_name+".png"))
 
-absolute_path = (os.path.abspath(outputPath)+"\ "+file_name+".png").strip()
+absolute_path = os.path.abspath(outputPath) + "/ " + file_name + ".png"
+
 print(absolute_path.strip())
 
 
