@@ -298,7 +298,7 @@ export class DefinedController {
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
         11,
-        { amountB: Amount, amountG: 0, amountR: Amount },
+        { amountB: 0, amountG: 0, amountR: Amount },
       );
 
       // //Upload to Supabase
@@ -377,7 +377,7 @@ export class DefinedController {
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
         4,
-        { amountB: XRes, amountG: YRes, amountR: 0 },
+        { amountB: 0, amountG: YRes, amountR: XRes },
       );
 
       // //Upload to Supabase
@@ -613,7 +613,7 @@ export class DefinedController {
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
         12,
-        { amountB: 45, amountG: 0, amountR: 0 },
+        { amountB: 0, amountG: 0, amountR: 45 },
       );
 
       //Upload to Supabase
@@ -689,8 +689,8 @@ export class DefinedController {
       //handle the process (calls python)
       const fileFolderResponse = await this.ProcessService.handleProcessEffect(
         stored_filepath,
-        11,
-        { amountB: 200, amountG: 0, amountR: 0 },
+        13,
+        { amountB: 0, amountG: 0, amountR: 200 },
       );
 
       //Upload to Supabase

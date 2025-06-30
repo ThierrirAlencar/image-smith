@@ -1,4 +1,5 @@
 import { OpenAPIObject } from "@nestjs/swagger";
+import { number } from "zod";
 
 export const swaggerOptions:OpenAPIObject = {
     info:{
@@ -1144,6 +1145,11 @@ export const swaggerOptions:OpenAPIObject = {
                 "image_id": {
                   "type": "string",
                   "format": "uuid"
+                },
+                "Amount":{
+                  "type":"number",
+                  "minimum":1,
+                  "maximum":200
                 }
               },
               "required": ["image_id"]
