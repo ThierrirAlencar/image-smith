@@ -9,9 +9,8 @@ import requests
 
 ##recebe os parametros a partir do script, ignora o parametro 0 pois este é o nome do arquivo
 parameters = sys.argv[1:]
-
+outputPath = "./uploads/finished/effect/bgremove"
 inputPath = parameters[0] # URl de entrada
-outputPath = parameters[1] # URL de saída
 
 # Faz download da imagem da URL pública do Supabase
 response = requests.get(inputPath)
@@ -29,7 +28,7 @@ if not os.path.exists(outputPath):
 
 
 
-output = remove(input)
+output = remove(img)
 output.save(os.path.join(outputPath, file_name+".png"))
 
 absolute_path = os.path.abspath(outputPath) + "/ " + file_name + ".png"
