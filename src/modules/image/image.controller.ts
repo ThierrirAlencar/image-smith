@@ -8,25 +8,22 @@ import {
     HttpException,
     HttpStatus,
     UseInterceptors,
-    UploadedFile,
     Res,
     Put,
     Param,
     UploadedFiles,
-  } from '@nestjs/common';
-  import { ImageService } from './image.service';
-  import { AuthGuard } from '@nestjs/passport';
-  import { z } from 'zod';
+} from '@nestjs/common';
+import { ImageService } from './image.service';
+import { AuthGuard } from '@nestjs/passport';
+import { z } from 'zod';
 import { AuthRequest } from 'src/interfaces/authRequest';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import {FilesInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
-import { AuthService } from '../auth/auth.service';
 import { log } from 'console';
-import { join } from 'path';
-import { diskStorage, memoryStorage } from 'multer';
 import { SupabaseService } from '../supabase/supabase.service';
 import { UserService } from '../user/user.service';
+import { memoryStorage } from 'multer';
   
 @Controller('images')
 export class ImageController {

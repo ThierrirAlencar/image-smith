@@ -1684,6 +1684,111 @@ export const swaggerOptions:OpenAPIObject = {
         },
       },
       },
+      "processes/defined/face_detection": {
+    post: {
+      tags: ["Image Effects"],
+      summary: "Face Detection",
+      description: "Detecta rostos em uma imagem e aplica o efeito selecionado: isolamento ou censura.",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                image_id: {
+                  type: "string",
+                  format: "uuid",
+                  example: "eae1c134-87a3-4fd2-a774-4ad497f1e215",
+                },
+                operation: {
+                  type: "string",
+                  enum: ["isolate", "censor"],
+                  example: "censor",
+                }
+              },
+              required: ["image_id", "operation"]
+            }
+          }
+        }
+      },
+      responses: {
+        "201": {
+          description: "Processamento do tipo FaceDetection criado com sucesso",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  statusCode: {
+                    type: "integer",
+                    example: 201
+                  },
+                  description: {
+                    type: "string",
+                    example: "Processamento do tipo FaceDetection criado com sucesso"
+                  },
+                  process: {
+                    $ref: "#/components/schemas/ProcessEntity"
+                  },
+                  image: {
+                    type: "string",
+                    format: "base64",
+                    example: "iVBORw0KGgoAAAANSUhEUgAAA... (base64)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          description: "Imagem não encontrada",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  description: {
+                    type: "string",
+                    example: "Imagem não encontrada"
+                  },
+                  error: {
+                    type: "string",
+                    example: "No Image found with id eae1c134-87a3-4fd2-a774-4ad497f1e215"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500": {
+          description: "Erro desconhecido",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  description: {
+                    type: "string",
+                    example: "Erro desconhecido"
+                  },
+                  error: {
+                    type: "string",
+                    example: "TypeError: Cannot read properties of undefined (reading 'xyz')"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      security: [
+        {
+          bearerAuth: []
+        }
+      ]
+    }
+    }
     },
     components: {
       securitySchemes: {
