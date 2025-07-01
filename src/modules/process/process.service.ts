@@ -276,8 +276,8 @@ export class ProcessService {
         
         //The command to be executed
         const scriptPath = join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py');
-        //const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
-        const command = `python3 ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
+        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
+        //const command = `python3 ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
