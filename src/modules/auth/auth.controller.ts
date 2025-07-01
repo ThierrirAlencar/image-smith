@@ -1,8 +1,7 @@
-import { Controller, Get, Patch, Put, Req, Res} from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Patch, Put, Req, Res} from '@nestjs/common';
+import { Response, Request } from 'express';
 import { z } from 'zod';
 import { mailService } from './mail.service';
-import passport from 'passport';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
 import { InvalidInformationProvided } from 'src/shared/errors/InvalidInformationProvided';
 
@@ -39,9 +38,9 @@ export class AuthController {
     
         try{
             const response = await this.mailService.updateUserPasswordBasedInPassword(refString,passport,newPassword);
-
+            
             res.status(200).send({
-              DescriptioN:"Successfully sent email",
+              DescriptioN:"Successfully updated email password",
               userUpdated:response.email      
             })
         }catch(err){

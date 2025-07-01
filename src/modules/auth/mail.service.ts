@@ -4,7 +4,7 @@ import { retry } from "rxjs";
 import { EmailType } from "src/interfaces/emailType";
 import { EntityNotFoundError } from "src/shared/errors/EntityDoesNotExistsError";
 import { InvalidInformationProvided } from "src/shared/errors/InvalidInformationProvided";
-import { GenValidationCode } from "src/shared/functions/genValidationCode";
+import { Gen5digitsValidationCode, GenValidationCode } from "src/shared/functions/genValidationCode";
 import { splitStringAtDash } from "src/shared/functions/separateCookieAtDash";
 import { SendEmail } from "src/shared/lib/nodemailer";
 import { PrismaService } from "src/shared/prisma/PrismaService";
@@ -14,7 +14,7 @@ export class mailService{
     constructor(private prisma:PrismaService){}
 
     async sendRecoveryEmail(userEmail:string){
-        const randCode = GenValidationCode()
+        const randCode = Gen5digitsValidationCode()
         const email:EmailType = {
             subject:"no-reply email de recuperação de senha",
             text:`
@@ -113,14 +113,17 @@ export class mailService{
         if(code != passedCode){
             throw new InvalidInformationProvided()
         }
-
-        return await this.prisma.user.update({
+        
+        const _password = await hash(newPassword,9)
+        const response = await this.prisma.user.update({
             data:{
-                password:await hash(newPassword,90)
+                password:_password
             },
             where:{
                 id:doesTheUserExists.id
             }
         })
+
+        return response
     }
 }
