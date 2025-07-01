@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Req, Res} from '@nestjs/common';
+import { Controller, Get, Patch, Put, Req, Res} from '@nestjs/common';
 import { Response } from 'express';
 import { z } from 'zod';
 import { mailService } from './mail.service';
