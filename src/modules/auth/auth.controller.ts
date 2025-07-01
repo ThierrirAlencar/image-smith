@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Req, Res} from '@nestjs/common';
+import { Controller, Get, Patch, Put, Req, Res} from '@nestjs/common';
 import { Response } from 'express';
 import { z } from 'zod';
 import { mailService } from './mail.service';
@@ -9,7 +9,7 @@ import { InvalidInformationProvided } from 'src/shared/errors/InvalidInformation
 @Controller('auth')
 export class AuthController {
     constructor(private mailService:mailService){}
-    @Get("")
+    @Patch("")
     async sendCode(@Req() req:Request, @Res() res: Response){
         const {email} = z.object({
             email:z.string().email()

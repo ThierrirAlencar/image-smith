@@ -120,19 +120,29 @@ def sepia(img):
                              [0.393, 0.769, 0.189, 0],
                              [0, 0, 0, 1]])
     return cv.transform(img, sepia_filter)
+
 def cartoon_filter(img):
+    # Garantir que a imagem está em BGR (não BGRA)
+    if img.shape[2] == 4:
+        img = cv.cvtColor(img, cv.COLOR_BGRA2BGR)
+
     # Converter para escala de cinza
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+
     # Aplicar blur para reduzir ruído
     gray_blur = cv.medianBlur(gray, 5)
+
     # Detectar bordas usando threshold adaptativo
     edges = cv.adaptiveThreshold(gray_blur, 255,
                                  cv.ADAPTIVE_THRESH_MEAN_C,
                                  cv.THRESH_BINARY, 9, 9)
+
     # Aplicar filtro bilateral para suavizar cores
     color = cv.bilateralFilter(img, 9, 250, 250)
-    # Combinar bordas e imagem suavizada
+
+    # Combinar bordas com imagem suavizada
     cartoon = cv.bitwise_and(color, color, mask=edges)
+
     return cartoon
 def pencil_sketch_filter(img):
     # Converter para escala de cinza

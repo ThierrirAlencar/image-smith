@@ -586,7 +586,7 @@ export const swaggerOptions:OpenAPIObject = {
         },
       },
       "/auth": {
-      "get": {
+      "patch": {
         "tags": ["Auth"],
         "summary": "Enviar código de recuperação por e-mail",
         "description": "Envia um e-mail com um código de recuperação de senha para o endereço fornecido.",
@@ -1097,6 +1097,12 @@ export const swaggerOptions:OpenAPIObject = {
                 "image_id": {
                   "type": "string",
                   "format": "uuid"
+                },
+                "Amount":{
+                  "type":"number",
+                  "minimum":1,
+                  "maximum":200,
+                  "default":25
                 }
               },
               "required": ["image_id"]
