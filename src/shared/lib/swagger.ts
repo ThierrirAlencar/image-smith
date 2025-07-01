@@ -586,7 +586,7 @@ export const swaggerOptions:OpenAPIObject = {
         },
       },
       "/auth": {
-      "get": {
+      "patch": {
         "tags": ["Auth"],
         "summary": "Enviar código de recuperação por e-mail",
         "description": "Envia um e-mail com um código de recuperação de senha para o endereço fornecido.",
