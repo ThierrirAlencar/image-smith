@@ -1,43 +1,64 @@
 import uuid
+import os
+import sys
 import cv2 as cv
+import numpy as np
 from PIL import Image
 
-## Abre o gif
-gif = cv.VideoCapture("flipperMachine.gif")
+# 🎯 Parâmetros da linha de comando
+parameters = sys.argv[1:]
 
-def applyEffectToFrame(frame, Effect=1):
-    img = frame
-    Amount = 5
+input_path = parameters[0]        # Caminho do GIF de entrada
+effect = int(parameters[1])       # Efeito a ser aplicado
+Amount = int(parameters[2])       # Intensidade geral
+AmountG = int(parameters[3])      # Intensidade G (caso RGB Boost - ignorado aqui)
+AmountB = int(parameters[4])      # Intensidade B (caso RGB Boost - ignorado aqui)
+
+effectsNameList = [
+    "", "Grayscale", "Blur", "Canny"
+]
+
+file_name = effectsNameList[effect] + "-" + str(uuid.uuid4())
+output_path = f"./uploads/finished/effect/{effectsNameList[effect]}"
+
+# 🗂️ Garante que o diretório de saída existe
+if not os.path.exists(output_path):
+    os.makedirs(output_path)
+
+# 📽️ Abre o GIF
+gif = cv.VideoCapture(input_path)
+
+# 🎨 Função para aplicar o efeito em cada frame
+def applyEffectToFrame(frame, Effect, Amount):
     match Effect:
-        case 1:  # imagem em escala de cinza
-            img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        case 1:  # Grayscale
+            img = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             img = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
-        case 2:  # efeito de desfoque
-            img = cv.GaussianBlur(img, (Amount, Amount), cv.BORDER_DEFAULT)
-        case 3:  # efeito de borda
-            img = cv.Canny(img, Amount * 10, (Amount * 10) + 125)
+        case 2:  # Blur
+            Amount = Amount if Amount % 2 == 1 else Amount + 1  # kernel ímpar
+            img = cv.GaussianBlur(frame, (Amount, Amount), cv.BORDER_DEFAULT)
+        case 3:  # Canny (bordas)
+            img = cv.Canny(frame, Amount * 10, (Amount * 10) + 125)
             img = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
+        case _:  # Nenhum ou inválido
+            img = frame
     return img
 
+# 🔄 Processamento frame a frame
 frames = []
 ret, frame = gif.read()
-frameNum = 0
 
-# Processa cada quadro do gif
 while ret:
-    frameNum += 1
-    frame_with_effect = applyEffectToFrame(frame, Effect=1)  # Alterne o valor de Effect para testar outros efeitos
-    
-    # Converte o quadro processado para RGB e o adiciona à lista de frames
-    frame_rgb = cv.cvtColor(frame_with_effect, cv.COLOR_BGR2RGB)
-    frames.append(Image.fromarray(frame_rgb))
-    
+    processed = applyEffectToFrame(frame, effect, Amount)
+    rgb_frame = cv.cvtColor(processed, cv.COLOR_BGR2RGB)
+    pil_frame = Image.fromarray(rgb_frame)
+    frames.append(pil_frame)
     ret, frame = gif.read()
 
-# Salva o GIF
+# 💾 Salvar o GIF final
 if frames:
-    output_path = f"processed_{uuid.uuid4()}.gif"
-    frames[0].save(output_path, save_all=True, append_images=frames[1:], loop=0, duration=100)
-    print(f"GIF salvo como {output_path}")
+    absolute_path = os.path.abspath(f"{output_path}/{file_name}.gif")
+    frames[0].save(absolute_path, save_all=True, append_images=frames[1:], loop=0, duration=100)
+    print(absolute_path)
 
 cv.destroyAllWindows()

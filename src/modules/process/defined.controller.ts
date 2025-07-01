@@ -1530,4 +1530,82 @@ export class DefinedController {
       );
     }
   }
+
+  //Face Detection
+  @Post("face_detection")
+  async face_detection(@Req() req: Request, @Res() res: Response) {
+    const schema = z
+      .object({
+        image_id: z.string().uuid(),
+        operation:z.enum(["isolate","censor"])
+      })
+      .parse(req.body);
+
+    const { image_id, operation } = schema;
+
+    try {
+      //Find the Image Who we Want to Change
+      const { stored_filepath, original_filename, user_id } =
+        await this.ImageService.findOne(image_id);
+      //Load User name
+      const { name } = await this.UserService.userProfile(user_id);
+
+      //handle the process (calls python)
+      const selcion = operation=="isolate"?1:2
+      const fileFolderResponse = await this.ProcessService.runFaceDetecionsFunctions(stored_filepath,selcion)
+
+      // //Upload to Supabase
+      //LoadImage Local Buffer (from python saved directory)
+      const localFileResponse =
+        await this.fileHandler.loadImage(fileFolderResponse);
+
+      //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
+      const publicPathUrl = await this.supabaseService.uploadToSupabase(
+        {
+          buffer: localFileResponse,
+          mimetype: "png",
+          originalname: original_filename,
+        },
+        `${name}/FaceDetection`,
+      );
+      
+      //Create the process as entity registering the sucess of the process operation
+      const created = await this.ProcessService.create({
+        image_id,
+        output_filename: publicPathUrl.public_url,
+        operation: "FaceDetection",
+      });
+     
+      //carregar imagem para retornar como base64
+      const bufferResult = await this.fileHandler.loadImage(fileFolderResponse);
+      // Transforma buffers em base64 e monta data URL
+      const base64 = bufferResult.toString("base64");
+      
+
+      res.status(201).send( {
+        statusCode: 201,
+        description: "Processamento do tipo FaceDetection criado com sucesso",
+        process: created,
+        image: base64,
+      });
+    } catch (err) {
+      if (err instanceof EntityNotFoundError) {
+        throw new HttpException(
+          {
+            description: "Imagem não encontrada",
+            error: err.message,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      throw new HttpException(
+        {
+          description: "Erro desconhecido",
+          error: err.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
