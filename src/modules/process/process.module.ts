@@ -7,10 +7,12 @@ import { FileService } from '../file/file.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import { UserService } from '../user/user.service';
 import { DefinedController } from './defined.controller';
+import { replicateService } from '../replicate/replicate.service';
+import { ConfigService } from '@nestjs/config';
 
 
 @Module({
-  providers: [ProcessService,PrismaService,ImageService,FileService,SupabaseService,UserService],
+  providers: [ProcessService,PrismaService,ImageService,FileService,SupabaseService,UserService,ConfigService,replicateService],
   controllers: [ProcessController, DefinedController]
 })
 export class ProcessModule {}

@@ -5,6 +5,7 @@ import {
   Post,
   Req,
   Res,
+  UseGuards,
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { z } from "zod";
@@ -14,6 +15,10 @@ import { ProcessService } from "./process.service";
 import { FileService } from "../file/file.service";
 import { SupabaseService } from "../supabase/supabase.service";
 import { EntityNotFoundError } from "src/shared/errors/EntityDoesNotExistsError";
+import { replicateService } from "../replicate/replicate.service";
+import { randomUUID } from "crypto";
+import { AuthGuard } from "@nestjs/passport";
+import { AuthRequest } from "src/interfaces/authRequest";
 
 @Controller("processes/defined")
 export class DefinedController {
@@ -23,6 +28,7 @@ export class DefinedController {
     private fileHandler: FileService,
     private supabaseService: SupabaseService,
     private UserService: UserService,
+    private replicateService:replicateService
   ) {}
 
   //Grayscale
@@ -1546,7 +1552,7 @@ export class DefinedController {
     try {
       //Find the Image Who we Want to Change
       const { stored_filepath, original_filename, user_id } =
-        await this.ImageService.findOne(image_id);
+      await this.ImageService.findOne(image_id);
       //Load User name
       const { name } = await this.UserService.userProfile(user_id);
 
@@ -1556,8 +1562,7 @@ export class DefinedController {
 
       // //Upload to Supabase
       //LoadImage Local Buffer (from python saved directory)
-      const localFileResponse =
-        await this.fileHandler.loadImage(fileFolderResponse);
+      const localFileResponse = await this.fileHandler.loadImage(fileFolderResponse);
 
       //Load Public Url Doing and Upload of the local result python image to the supabase Bucket
       const publicPathUrl = await this.supabaseService.uploadToSupabase(
@@ -1606,6 +1611,57 @@ export class DefinedController {
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+
+  @Post("gen_by_ai")
+  async gen_by_ai(@Req() req:Request, @Res() res:Response){
+    const schema = z.object({
+      prompt:z.string({
+        message:"Por favor preencha a string obrigatória"
+      }),
+      userName:z.string()
+    }).parse(req.body)
+    
+    const {prompt, userName} = schema
+
+    try{
+      const aigenUrl = await this.replicateService.run(prompt);
+      console.log(aigenUrl)
+      const loadFile = await this.fileHandler.loadImage(aigenUrl);
+      console.log(loadFile)
+      const storeToSupabase = await this.supabaseService.uploadToSupabase(
+        {
+          buffer:loadFile,
+          mimetype:"png",
+          originalname:"ai-"+randomUUID()+".png"
+        },
+        `${userName}/AI`
+      )
+      
+      //Create the process as entity registering the sucess of the process operation
+      const created = await this.ProcessService.create({
+        image_id:"",
+        output_filename: storeToSupabase.public_url,
+        operation: "genByAI",
+      });
+
+      // Transforma buffers em base64 e monta data URL
+      const base64 = loadFile.toString("base64");
+
+      res.status(201).send( {
+        statusCode: 201,
+        description: "Processamento do tipo Generate ai criado com sucesso",
+        process: created,
+        image: base64,
+      });
+
+    }catch(err){
+        res.status(500).send({
+          description:"This route throws no know error",
+          message:err.message
+        })
     }
   }
 }
