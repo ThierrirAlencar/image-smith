@@ -58,4 +58,40 @@ export class replicateService {
 
         return filepath;
     }
+
+    async turnCartoon(imageUrl:string){
+        const input = {
+            prompt:"Make this a 90s cartoon",
+            input_image: imageUrl,
+            aspect_ratio: "match_input_image",
+            output_format: "png",
+            safety_tolerance: 2
+        };
+
+        const output = await this.replicate.run("black-forest-labs/flux-kontext-pro", { input });
+        console.log(output)
+        const cartoonImageUrl = output[0];
+    
+        // Baixa a imagem
+        const response = await fetch(cartoonImageUrl);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        
+        const filename = `ai-${randomUUID()}.png`;
+        const uploadDir = path.resolve(__dirname, "..", "..", "..", "uploads", "temp");
+        const filepath = path.join(uploadDir, filename);
+
+        // Certifique-se que a pasta existe (opcional, mas recomendado)
+        
+        await mkdir(uploadDir, { recursive: true });
+        // To write the file to disk:
+        writeFile("my-image.png", buffer);
+
+        console.log({
+            description:"Imagem Salva",
+            path: filepath
+        });
+
+        return filepath;
+    }
 }

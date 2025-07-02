@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { Request, Response } from "express";
-import { z } from "zod";
+import { string, z } from "zod";
 import { ImageService } from "../image/image.service";
 import { UserService } from "../user/user.service";
 import { ProcessService } from "./process.service";
@@ -1653,6 +1653,58 @@ export class DefinedController {
       res.status(201).send( {
         statusCode: 201,
         description: "Processamento do tipo Generate ai criado com sucesso",
+        process: created,
+        image: base64,
+      });
+
+    }catch(err){
+        res.status(500).send({
+          description:"This route throws no know error",
+          message:err.message
+        })
+    }
+  }
+
+  @Post("cartoom_90")
+  async cartoom_90(@Req() req:Request, @Res() res:Response){
+    const schema = z.object({
+      imageId:z.string()
+    }).parse(req.body)
+    
+    const {imageId} = schema
+
+    try{
+      //Find the Image Who we Want to Change
+      const { stored_filepath, original_filename, user_id } = await this.ImageService.findOne(imageId);
+      //Load User name
+      const { name } = await this.UserService.userProfile(user_id);
+
+      const aigenUrl = await this.replicateService.turnCartoon(stored_filepath);
+      console.log(aigenUrl)
+      const loadFile = await this.fileHandler.loadImage(aigenUrl);
+      console.log(loadFile)
+      const storeToSupabase = await this.supabaseService.uploadToSupabase(
+        {
+          buffer:loadFile,
+          mimetype:"png",
+          originalname:"ai-"+randomUUID()+".png"
+        },
+        `${name}/cartoom_90`
+      )
+      
+      //Create the process as entity registering the sucess of the process operation
+      const created = await this.ProcessService.create({
+        image_id:"",
+        output_filename: storeToSupabase.public_url,
+        operation: "cartoom_90",
+      });
+
+      // Transforma buffers em base64 e monta data URL
+      const base64 = loadFile.toString("base64");
+
+      res.status(201).send( {
+        statusCode: 201,
+        description: "Processamento do tipo cartoom_90 ai criado com sucesso",
         process: created,
         image: base64,
       });
