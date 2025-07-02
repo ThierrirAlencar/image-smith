@@ -16,6 +16,10 @@ inputPath = parameters[0] # URl de entrada
 response = requests.get(inputPath)
 response.raise_for_status()  # Garante que a resposta é válida
 
+# Faz download da imagem da URL pública do Supabase
+response = requests.get(inputPath)
+response.raise_for_status()  # Garante que a resposta é válida
+
 file_name = str(uuid.uuid4())
 
 # Abre a imagem diretamente da memória
@@ -31,7 +35,7 @@ if not os.path.exists(outputPath):
 output = remove(img)
 output.save(os.path.join(outputPath, file_name+".png"))
 
-absolute_path = os.path.abspath(outputPath) + "/ " + file_name + ".png"
+absolute_path = os.path.abspath(outputPath) + "/" + file_name + ".png"
 
 print(absolute_path.strip())
 
