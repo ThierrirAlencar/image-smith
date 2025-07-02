@@ -215,8 +215,8 @@ export class ProcessService {
         const execAsync = promisify(exec)
         
         //The command to be executed
-        const scriptPath = join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py');
-        //const command = `${this.venvPython} ${scriptPath} ${imagePathRelative}`;
+        //const scriptPath = join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py');
+        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative}`;
         const command = `python3 ${scriptPath} ${imagePathRelative}`;
         console.log(`running: ${command}`);
       
