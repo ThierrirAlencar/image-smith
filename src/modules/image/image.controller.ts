@@ -12,13 +12,14 @@ import {
     Put,
     Param,
     UploadedFiles,
+    UploadedFile,
 } from '@nestjs/common';
 import { ImageService } from './image.service';
 import { AuthGuard } from '@nestjs/passport';
 import { z } from 'zod';
 import { AuthRequest } from 'src/interfaces/authRequest';
 import { EntityNotFoundError } from 'src/shared/errors/EntityDoesNotExistsError';
-import {FilesInterceptor } from '@nestjs/platform-express';
+import {FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Request, Response } from 'express';
 import { log } from 'console';
 import { SupabaseService } from '../supabase/supabase.service';
@@ -34,78 +35,70 @@ export class ImageController {
 
     ) {}
   
-    @UseGuards(AuthGuard('jwt'))
-    @UseInterceptors(FilesInterceptor("file", 5, {
+@UseGuards(AuthGuard('jwt'))
+    @UseInterceptors(FileInterceptor("file",{
       fileFilter: (req, file, cb) => {
+        console.log(file)
         if (!file.mimetype.startsWith('image/')) {
-          return cb(new Error('Apenas arquivos de imagem são permitidos!'), false);
+            return cb(new Error('Apenas arquivos de imagem são permitidos!'), false);
         }
         cb(null, true);
       },
-      storage: memoryStorage(),
-      limits: {
-        fileSize: 5 * 1000000, // 5MB por imagem
+      storage:memoryStorage(),
+      limits:{
+        fileSize:5*1000000,//5mb
       }
     }))
     @Post('')
-    async uploadImage(
-      @Req() req: AuthRequest,
-      @UploadedFiles() files: Express.Multer.File[]
-    ) {
-      const { id: userId } = z.object({ id: z.string().uuid() }).parse(req.user);
-      const user = await this.userService.userProfile(userId);
+    async uploadImage(@Req() req: AuthRequest,@UploadedFile() file:Express.Multer.File) {
+      const { id: userId } = z
+        .object({ id: z.string().uuid() })
+        .parse(req.user);
+      //Loads User for Storage
+      const user = await this.userService.userProfile(userId)
 
-      const results = [];
-
-      for (const file of files) {
-        const { original_filename, public_url: stored_filepath } =
-          await this.supabaseService.uploadToSupabase({
-            buffer: file.buffer,
-            mimetype: file.mimetype,
-            originalname: file.originalname
-          }, `${user.name}/images`);
-
-        try {
-          const {
-            Id,
-            created_at,
-            original_filename: result_fileName,
-            process_filepath: result_process_filePath,
-            size,
-            stored_filepath: result_stored_filePath,
-            updated_at
-          } = await this.imageService.create({
+      //Uploads the Image to the S3 Supabase Bucket
+      const {original_filename,public_url:stored_filepath} = await this.supabaseService.uploadToSupabase(
+        {buffer:file.buffer,mimetype:file.mimetype,originalname:file.originalname},`${user.name}/images`)
+  
+      try {
+        console.log(stored_filepath)
+        const {
+          Id,
+          created_at,
+          original_filename:result_fileName,
+          process_filepath:result_process_filePath,
+          size,
+          stored_filepath:result_stored_filePath,
+          updated_at} = await this.imageService.create({
             original_filename,
             stored_filepath,
-            user_favorite: false,
-            user_id: userId
-          });
-
-          results.push({
+            user_favorite:false,
+            user_id:userId
+        });
+  
+        return {
+          statusCode: 201,
+          description: 'Imagem enviada com sucesso',
+          image: {
             Id,
             created_at,
-            original_filename: result_fileName,
-            process_filepath: result_process_filePath,
+            original_filename:result_fileName,
+            process_filepath:result_process_filePath,
             size,
-            stored_filepath: result_stored_filePath,
+            stored_filepath:result_stored_filePath,
             updated_at
-          });
-        } catch (err) {
-          throw new HttpException(
-            {
-              description: 'Erro ao salvar imagem',
-              error: err.message,
-            },
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
+          },
+        };
+      } catch (err) {
+        throw new HttpException(
+          {
+            description: 'Erro ao salvar imagem',
+            error: err.message,
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
-
-      return {
-        statusCode: 201,
-        description: 'Imagens enviadas com sucesso',
-        images: results,
-      };
     }
   
     @UseGuards(AuthGuard('jwt'))
