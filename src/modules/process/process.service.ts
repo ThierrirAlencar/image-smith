@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+euimport { Injectable } from '@nestjs/common';
 import { Image, image_processing, Prisma } from '@prisma/client';
 import { join } from 'path';
 import { EntityNotFoundError } from '../..//shared/errors/EntityDoesNotExistsError';
@@ -184,8 +184,8 @@ export class ProcessService {
         //Separates the RGB values from amount
         const {p1:A,p2:B,p3:C,p4:D} = amount
         
-        //const command = `${this.venvPython} ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
-        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
+        const command = `${this.venvPython} ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
+        //const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
 
 
 
@@ -216,8 +216,8 @@ export class ProcessService {
         
         //The command to be executed
         const scriptPath = join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py');
-        //const command = `${this.venvPython} ${scriptPath} ${imagePathRelative}`;
-        const command = `python3 ${scriptPath} ${imagePathRelative}`;
+        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative}`;
+        //const command = `python3 ${scriptPath} ${imagePathRelative}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
@@ -276,8 +276,8 @@ export class ProcessService {
         
         //The command to be executed
         const scriptPath = join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py');
-        //const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
-        const command = `python3 ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
+        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
+        //const command = `python3 ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
