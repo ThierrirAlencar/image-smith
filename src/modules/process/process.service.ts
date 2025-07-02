@@ -28,14 +28,14 @@ export class ProcessService {
     constructor(private prisma:PrismaService){}
     
     async create(data:Prisma.image_processingUncheckedCreateInput):Promise<image_processing>{
-        const doesTheImageExists = await this.prisma.image.findUnique({
-            where:{
-                Id:data.image_id
-            }
-        })
-        if(!doesTheImageExists){
-            throw new EntityNotFoundError("Image",data.image_id)
-        }
+        // const doesTheImageExists = await this.prisma.image.findUnique({
+        //     where:{
+        //         Id:data.image_id
+        //     }
+        // })
+        // if(!doesTheImageExists){
+        //     throw new EntityNotFoundError("Image",data.image_id)
+        // }
 
         const Process = await this.prisma.image_processing.create({
             data,
@@ -155,8 +155,8 @@ export class ProcessService {
         //The command to be executed
 
         const scriptPath = join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py');
-        
-        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
+        const command = `python3 ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
+        //const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
@@ -184,8 +184,8 @@ export class ProcessService {
         //Separates the RGB values from amount
         const {p1:A,p2:B,p3:C,p4:D} = amount
         
-        const command = `${this.venvPython} ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
-      
+        //const command = `${this.venvPython} ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
+        const command = `python3 ${join(this.basePath, 'src', 'Generators', 'Transformations', 'another.py')} ${imagePathRelative} ${transformIndex} ${A} ${B} ${C} ${D}`
 
 
 
@@ -216,8 +216,8 @@ export class ProcessService {
         
         //The command to be executed
         const scriptPath = join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py');
-        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative}`;
-        //const command = `python3 ${scriptPath} ${imagePathRelative}`;
+        //const command = `${this.venvPython} ${scriptPath} ${imagePathRelative}`;
+        const command = `python3 ${scriptPath} ${imagePathRelative}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
@@ -276,8 +276,8 @@ export class ProcessService {
         
         //The command to be executed
         const scriptPath = join(this.basePath, 'src', 'Generators', 'Especial', 'bgremove.py');
-        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
-        //const command = `python3 ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
+        //const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
+        const command = `python3 ${scriptPath} ${imagePathRelative} ${EffectIndex}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
