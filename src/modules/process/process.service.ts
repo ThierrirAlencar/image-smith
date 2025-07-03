@@ -155,8 +155,8 @@ export class ProcessService {
         //The command to be executed
 
         const scriptPath = join(this.basePath, 'src', 'Generators', 'Effects', 'Effects.py');
-        const command = `python3 ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
-        //const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
+        //const command = `python3 ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
+        const command = `${this.venvPython} ${scriptPath} ${imagePathRelative} ${effectIndex} ${R} ${G} ${B}`;
         console.log(`running: ${command}`);
       
         //Tries to run the command
